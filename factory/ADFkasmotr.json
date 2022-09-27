@@ -1,0 +1,9 @@
+{
+	"name": "ADFkasmotr",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "04b45b3a-328b-4b1f-9423-bc79ffb4d4be",
+		"tenantId": "979ffdff-332b-406c-8644-6d8db569225f"
+	}
+}
