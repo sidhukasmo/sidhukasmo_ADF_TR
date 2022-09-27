@@ -1,0 +1,149 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ADFkasmotr"
+		},
+		"LK_ABS_Input_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LK_ABS_Input'"
+		},
+		"LK_AzureSqlDatabase1_output_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LK_AzureSqlDatabase1_output'"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_AzureSqlDatabase1_output",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Make",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Model",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Type",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Origin",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DriveTrain",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Length",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Cars"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Cars_Input')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_ABS_Input",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Make",
+						"type": "String"
+					},
+					{
+						"name": "Model",
+						"type": "String"
+					},
+					{
+						"name": "Type",
+						"type": "String"
+					},
+					{
+						"name": "Origin",
+						"type": "String"
+					},
+					{
+						"name": "DriveTrain",
+						"type": "String"
+					},
+					{
+						"name": "Length",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LK_ABS_Input')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('LK_ABS_Input_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LK_AzureSqlDatabase1_output')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('LK_AzureSqlDatabase1_output_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
