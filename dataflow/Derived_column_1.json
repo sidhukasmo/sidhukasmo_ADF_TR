@@ -20,10 +20,20 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "joininner1"
+				}
+			],
 			"scriptLines": [
 				"parameters{",
-				"     Make_lenth as integer (length(toString(Make)))",
+				"     title_trim as string (trim(title))",
 				"}",
 				"source(output(",
 				"          movieId as string,",
@@ -45,7 +55,14 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source2"
+				"     ignoreNoFilesFound: false) ~> source2",
+				"source1 derive() ~> derivedColumn1",
+				"source2 derive(title_trim2 = trim(title)) ~> derivedColumn2",
+				"derivedColumn1, derivedColumn2 join(source1@title == source2@title,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joininner1"
 			]
 		}
 	}
