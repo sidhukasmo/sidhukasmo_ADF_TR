@@ -339,10 +339,14 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "movies",
+								"referenceName": "moviesjoineddata",
 								"type": "DatasetReference"
 							},
-							"name": "sink1"
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "LK_ABS_Input",
+								"type": "LinkedServiceReference"
+							}
 						}
 					],
 					"transformations": [
@@ -389,20 +393,95 @@
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> joininner1",
 						"joininner1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          movieId as string,",
-						"          title as string,",
-						"          genres as string",
-						"     ),",
+						"     validateSchema: true,",
+						"     truncate: true,",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> sink1"
+						"     skipDuplicateMapOutputs: true,",
+						"     quoteAll: true) ~> sink1"
 					]
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/movies')]",
-				"[concat(variables('factoryId'), '/datasets/moviesdb')]"
+				"[concat(variables('factoryId'), '/datasets/moviesdb')]",
+				"[concat(variables('factoryId'), '/datasets/moviesjoineddata')]",
+				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/moviesjoineddata')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_ABS_Input",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_Join_2datasets')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Derived_column_1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Derived_column_1",
+								"type": "DataFlowReference",
+								"parameters": {
+									"title_trim": "trim(title)"
+								},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Derived_column_1')]"
 			]
 		}
 	]
