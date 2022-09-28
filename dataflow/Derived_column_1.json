@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "Cars_Input",
+						"referenceName": "movies",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -19,12 +19,9 @@
 				"     Make_lenth as integer (length(toString(Make)))",
 				"}",
 				"source(output(",
-				"          Make as string,",
-				"          Model as string,",
-				"          Type as string,",
-				"          Origin as string,",
-				"          DriveTrain as string,",
-				"          Length as string",
+				"          movieId as string,",
+				"          title as string,",
+				"          genres as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
