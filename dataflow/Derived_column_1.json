@@ -22,10 +22,14 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "movies",
+						"referenceName": "moviesjoineddata",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "sink1",
+					"rejectedDataLinkedService": {
+						"referenceName": "LK_ABS_Input",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [
@@ -72,14 +76,11 @@
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joininner1",
 				"joininner1 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          movieId as string,",
-				"          title as string,",
-				"          genres as string",
-				"     ),",
+				"     validateSchema: true,",
+				"     truncate: true,",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true,",
+				"     quoteAll: true) ~> sink1"
 			]
 		}
 	}
