@@ -29,7 +29,11 @@
 						"referenceName": "movies",
 						"type": "DatasetReference"
 					},
-					"name": "SKColumnSplit"
+					"name": "SKColumnSplit",
+					"rejectedDataLinkedService": {
+						"referenceName": "LK_ABS_Input",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [
