@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Derived_column_1",
+						"referenceName": "DF_Join_ex",
 						"type": "DataFlowReference",
 						"parameters": {
 							"title_trim": "trim(title)"

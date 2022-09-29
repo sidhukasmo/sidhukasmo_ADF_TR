@@ -1,5 +1,5 @@
 {
-	"name": "Derived_column_1",
+	"name": "DF_Join_ex",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
