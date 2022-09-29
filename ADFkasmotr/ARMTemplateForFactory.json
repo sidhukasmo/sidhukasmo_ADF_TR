@@ -257,7 +257,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "movies.csv",
+						"fileName": "movies_v1.csv",
 						"container": "input"
 					},
 					"columnDelimiter": ",",
@@ -483,6 +483,100 @@
 				"[concat(variables('factoryId'), '/datasets/movies')]",
 				"[concat(variables('factoryId'), '/datasets/moviesdb')]",
 				"[concat(variables('factoryId'), '/datasets/moviesjoineddata')]",
+				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_Agr_split')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "movies",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "movies",
+								"type": "DatasetReference"
+							},
+							"name": "SKColumnCount",
+							"rejectedDataLinkedService": {
+								"referenceName": "LK_ABS_Input",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"dataset": {
+								"referenceName": "movies",
+								"type": "DatasetReference"
+							},
+							"name": "SKColumnSplit",
+							"rejectedDataLinkedService": {
+								"referenceName": "LK_ABS_Input",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "DCyear"
+						},
+						{
+							"name": "aggregateYear",
+							"description": "Aaggregate Year"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          movieId as string,",
+						"          title as string,",
+						"          genres as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 derive(Year = trim(right(title, 6),'()'),",
+						"          title = trim(title,right(title,6))) ~> DCyear",
+						"DCyear aggregate(groupBy(Year),",
+						"     ty = count(toInteger(Year))) ~> aggregateYear",
+						"aggregateYear sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          movieId as string,",
+						"          title as string,",
+						"          genres as string",
+						"     ),",
+						"     partitionFileNames:['Movies_Count_Year'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 2,",
+						"     partitionBy('hash', 1)) ~> SKColumnCount",
+						"DCyear sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          movieId as string,",
+						"          title as string,",
+						"          genres as string",
+						"     ),",
+						"     partitionFileNames:['movies_Split'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     partitionBy('hash', 1)) ~> SKColumnSplit"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/movies')]",
 				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
 			]
 		}
