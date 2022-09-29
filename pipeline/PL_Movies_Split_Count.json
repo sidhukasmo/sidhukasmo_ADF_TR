@@ -21,10 +21,6 @@
 						"type": "DataFlowReference"
 					},
 					"staging": {
-						"linkedService": {
-							"referenceName": "LK_ABS_Input",
-							"type": "LinkedServiceReference"
-						},
 						"folderPath": "output"
 					},
 					"compute": {
