@@ -340,7 +340,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Derived_column_1')]",
+			"name": "[concat(parameters('factoryName'), '/DF_Join_ex')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -420,10 +420,12 @@
 						"     broadcast: 'auto')~> joininner1",
 						"joininner1 sink(allowSchemaDrift: true,",
 						"     validateSchema: true,",
+						"     partitionFileNames:['moviesjoinOPT'],",
 						"     truncate: true,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     quoteAll: true) ~> sink1"
+						"     quoteAll: true,",
+						"     partitionBy('hash', 1)) ~> sink1"
 					]
 				}
 			},
@@ -441,7 +443,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Derived_column_1",
+						"name": "DF_Join_ex",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -454,7 +456,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Derived_column_1",
+								"referenceName": "DF_Join_ex",
 								"type": "DataFlowReference",
 								"parameters": {
 									"title_trim": "trim(title)"
@@ -481,7 +483,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/Derived_column_1')]"
+				"[concat(variables('factoryId'), '/dataflows/DF_Join_ex')]"
 			]
 		}
 	]
