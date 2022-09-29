@@ -18,7 +18,11 @@
 						"referenceName": "movies",
 						"type": "DatasetReference"
 					},
-					"name": "SKColumnCount"
+					"name": "SKColumnCount",
+					"rejectedDataLinkedService": {
+						"referenceName": "LK_ABS_Input",
+						"type": "LinkedServiceReference"
+					}
 				},
 				{
 					"dataset": {
@@ -60,7 +64,8 @@
 				"     partitionFileNames:['Movies_Count_Year'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     saveOrder: 2) ~> SKColumnCount",
+				"     saveOrder: 2,",
+				"     partitionBy('hash', 1)) ~> SKColumnCount",
 				"DCyear sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
