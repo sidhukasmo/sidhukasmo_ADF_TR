@@ -27,7 +27,8 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 derive() ~> DCyear"
+				"source1 derive(Year = trim(right(title, 6),'()'),",
+				"          title = trim(title,right(title,6))) ~> DCyear"
 			]
 		}
 	}
