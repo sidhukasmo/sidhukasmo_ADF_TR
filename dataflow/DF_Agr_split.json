@@ -13,7 +13,11 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "DCyear"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          movieId as string,",
@@ -22,7 +26,8 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1"
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive() ~> DCyear"
 			]
 		}
 	}
