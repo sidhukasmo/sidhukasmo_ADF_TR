@@ -16,6 +16,10 @@
 			"transformations": [
 				{
 					"name": "DCyear"
+				},
+				{
+					"name": "aggregateYear",
+					"description": "Aaggregate Year"
 				}
 			],
 			"scriptLines": [
@@ -28,7 +32,8 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1",
 				"source1 derive(Year = trim(right(title, 6),'()'),",
-				"          title = trim(title,right(title,6))) ~> DCyear"
+				"          title = trim(title,right(title,6))) ~> DCyear",
+				"DCyear aggregate(ty = count(toInteger(Year))) ~> aggregateYear"
 			]
 		}
 	}
