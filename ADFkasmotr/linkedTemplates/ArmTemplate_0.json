@@ -421,7 +421,6 @@
 						"joininner1 sink(allowSchemaDrift: true,",
 						"     validateSchema: true,",
 						"     partitionFileNames:['moviesjoinOPT'],",
-						"     truncate: true,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     quoteAll: true,",
