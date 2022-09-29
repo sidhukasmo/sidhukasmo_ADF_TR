@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Derived_column_1",
+				"name": "DF_Join_ex",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
