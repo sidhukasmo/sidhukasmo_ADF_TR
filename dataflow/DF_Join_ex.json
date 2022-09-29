@@ -80,7 +80,8 @@
 				"     truncate: true,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     quoteAll: true) ~> sink1"
+				"     quoteAll: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
