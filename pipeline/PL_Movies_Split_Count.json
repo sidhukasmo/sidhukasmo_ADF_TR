@@ -21,10 +21,6 @@
 						"type": "DataFlowReference"
 					},
 					"staging": {
-						"linkedService": {
-							"referenceName": "LK_Sink _OUTPUT",
-							"type": "LinkedServiceReference"
-						},
 						"folderPath": "output"
 					},
 					"compute": {
