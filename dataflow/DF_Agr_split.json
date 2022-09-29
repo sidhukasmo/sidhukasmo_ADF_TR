@@ -77,7 +77,7 @@
 				"          title as string,",
 				"          genres as string",
 				"     ),",
-				"     partitionFileNames:['movies_Split'],",
+				"     partitionFileNames:[''],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
