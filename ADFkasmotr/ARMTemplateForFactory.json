@@ -14,6 +14,10 @@
 		"LK_AzureSqlDatabase1_output_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LK_AzureSqlDatabase1_output'"
+		},
+		"LK_Sink _OUTPUT_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LK_Sink _OUTPUT'"
 		}
 	},
 	"variables": {
@@ -439,6 +443,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LK_Sink _OUTPUT')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('LK_Sink _OUTPUT_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DF_Agr_split')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -511,6 +528,8 @@
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     saveOrder: 2,",
+						"     outputAssertFailedRows: true,",
+						"     assertFailure_container: 'output',",
 						"     partitionBy('hash', 1)) ~> SKColumnCount",
 						"DCyear sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
@@ -523,6 +542,8 @@
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     saveOrder: 1,",
+						"     outputAssertFailedRows: true,",
+						"     assertFailure_container: 'output',",
 						"     partitionBy('hash', 1)) ~> SKColumnSplit"
 					]
 				}

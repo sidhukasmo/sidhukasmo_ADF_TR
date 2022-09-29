@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LK_AzureSqlDatabase1_output'"
 		},
+		"LK_Sink _OUTPUT_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LK_Sink _OUTPUT'"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -47,6 +51,9 @@
 					},
 					"LK_AzureSqlDatabase1_output_connectionString": {
 						"value": "[parameters('LK_AzureSqlDatabase1_output_connectionString')]"
+					},
+					"LK_Sink _OUTPUT_connectionString": {
+						"value": "[parameters('LK_Sink _OUTPUT_connectionString')]"
 					}
 				}
 			},
