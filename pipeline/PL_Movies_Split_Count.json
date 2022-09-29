@@ -22,7 +22,7 @@
 					},
 					"staging": {
 						"linkedService": {
-							"referenceName": "LK_ABS_Input",
+							"referenceName": "LK_Sink _OUTPUT",
 							"type": "LinkedServiceReference"
 						},
 						"folderPath": "output"
