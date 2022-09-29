@@ -18,14 +18,14 @@
 						"referenceName": "movies",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "SKColumnCount"
 				},
 				{
 					"dataset": {
 						"referenceName": "movies",
 						"type": "DatasetReference"
 					},
-					"name": "sink2"
+					"name": "SKColumnSplit"
 				}
 			],
 			"transformations": [
@@ -57,8 +57,9 @@
 				"          title as string,",
 				"          genres as string",
 				"     ),",
+				"     partitionFileNames:['Movies_Count_Year'],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1",
+				"     skipDuplicateMapOutputs: true) ~> SKColumnCount",
 				"DCyear sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -69,7 +70,7 @@
 				"     partitionFileNames:['movies_Split'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink2"
+				"     partitionBy('hash', 1)) ~> SKColumnSplit"
 			]
 		}
 	}
