@@ -579,6 +579,55 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/DF_Join_ex')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_Movies_Split_Count')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Movies Data, Column extract and count no of movies for Year",
+				"activities": [
+					{
+						"name": "DF_Agr_split",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DF_Agr_split",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"SKColumnCount": {},
+									"SKColumnSplit": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DF_Agr_split')]"
+			]
 		}
 	]
 }
