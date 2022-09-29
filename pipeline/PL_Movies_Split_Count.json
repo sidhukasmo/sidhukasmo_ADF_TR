@@ -20,6 +20,13 @@
 						"referenceName": "DF_Agr_split",
 						"type": "DataFlowReference"
 					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LK_ABS_Input",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "output"
+					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
