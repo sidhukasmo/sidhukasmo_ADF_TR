@@ -59,7 +59,8 @@
 				"     ),",
 				"     partitionFileNames:['Movies_Count_Year'],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SKColumnCount",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 2) ~> SKColumnCount",
 				"DCyear sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -70,6 +71,7 @@
 				"     partitionFileNames:['movies_Split'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
 				"     partitionBy('hash', 1)) ~> SKColumnSplit"
 			]
 		}
