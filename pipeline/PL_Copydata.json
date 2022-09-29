@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1_copydata",
+	"name": "PL_Copydata",
 	"properties": {
 		"activities": [
 			{
