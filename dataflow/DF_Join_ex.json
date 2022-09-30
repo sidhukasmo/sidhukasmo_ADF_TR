@@ -22,7 +22,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "moviesjoineddata",
+						"referenceName": "CSVoutput",
 						"type": "DatasetReference"
 					},
 					"name": "sink1",

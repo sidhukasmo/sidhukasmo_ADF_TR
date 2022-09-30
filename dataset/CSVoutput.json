@@ -1,5 +1,5 @@
 {
-	"name": "moviesjoineddata",
+	"name": "CSVoutput",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LK_ABS_Input",
