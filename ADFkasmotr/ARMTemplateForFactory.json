@@ -297,7 +297,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/movies')]",
+			"name": "[concat(parameters('factoryName'), '/CSVinput')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -391,7 +391,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/moviesjoineddata')]",
+			"name": "[concat(parameters('factoryName'), '/CSVoutput')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -465,7 +465,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "movies",
+								"referenceName": "CSVinput",
 								"type": "DatasetReference"
 							},
 							"name": "source1"
@@ -474,7 +474,7 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "movies",
+								"referenceName": "CSVoutput",
 								"type": "DatasetReference"
 							},
 							"name": "SKColumnCount",
@@ -485,7 +485,7 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "movies",
+								"referenceName": "CSVoutput",
 								"type": "DatasetReference"
 							},
 							"name": "SKColumnSplit",
@@ -519,11 +519,6 @@
 						"     ty = count(toInteger(Year))) ~> aggregateYear",
 						"aggregateYear sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     input(",
-						"          movieId as string,",
-						"          title as string,",
-						"          genres as string",
-						"     ),",
 						"     partitionFileNames:['Movies_Count_Year'],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
@@ -533,11 +528,6 @@
 						"     partitionBy('hash', 1)) ~> SKColumnCount",
 						"DCyear sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     input(",
-						"          movieId as string,",
-						"          title as string,",
-						"          genres as string",
-						"     ),",
 						"     partitionFileNames:['movies_Split'],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
@@ -549,7 +539,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/movies')]",
+				"[concat(variables('factoryId'), '/datasets/CSVinput')]",
+				"[concat(variables('factoryId'), '/datasets/CSVoutput')]",
 				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
 			]
 		},
@@ -563,7 +554,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "movies",
+								"referenceName": "CSVinput",
 								"type": "DatasetReference"
 							},
 							"name": "source1"
@@ -579,7 +570,7 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "moviesjoineddata",
+								"referenceName": "CSVoutput",
 								"type": "DatasetReference"
 							},
 							"name": "sink1",
@@ -643,9 +634,9 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/movies')]",
+				"[concat(variables('factoryId'), '/datasets/CSVinput')]",
 				"[concat(variables('factoryId'), '/datasets/moviesdb')]",
-				"[concat(variables('factoryId'), '/datasets/moviesjoineddata')]",
+				"[concat(variables('factoryId'), '/datasets/CSVoutput')]",
 				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
 			]
 		}
