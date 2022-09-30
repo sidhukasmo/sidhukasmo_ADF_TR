@@ -26,7 +26,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "movies",
+						"referenceName": "moviesjoineddata",
 						"type": "DatasetReference"
 					},
 					"name": "SKColumnSplit",
@@ -69,11 +69,6 @@
 				"     partitionBy('hash', 1)) ~> SKColumnCount",
 				"DCyear sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          movieId as string,",
-				"          title as string,",
-				"          genres as string",
-				"     ),",
 				"     partitionFileNames:['movies_Split'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
