@@ -83,7 +83,8 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
 				"     outputAssertFailedRows: true,",
-				"     assertFailure_container: 'output') ~> SKColumnSplit"
+				"     assertFailure_container: 'output',",
+				"     partitionBy('hash', 1)) ~> SKColumnSplit"
 			]
 		}
 	}
