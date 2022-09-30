@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "movies",
+						"referenceName": "moviesjoineddata",
 						"type": "DatasetReference"
 					},
 					"name": "SKColumnCount",
@@ -60,11 +60,6 @@
 				"     ty = count(toInteger(Year))) ~> aggregateYear",
 				"aggregateYear sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          movieId as string,",
-				"          title as string,",
-				"          genres as string",
-				"     ),",
 				"     partitionFileNames:['Movies_Count_Year'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
