@@ -1,5 +1,5 @@
 {
-	"name": "movies",
+	"name": "CSVinput",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LK_ABS_Input",
