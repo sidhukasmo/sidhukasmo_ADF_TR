@@ -3,18 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ForEach1",
-				"type": "ForEach",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"items": {
-						"value": "@variables('foreacharray')",
-						"type": "Expression"
-					}
-				}
-			},
-			{
 				"name": "Copy data1_cars",
 				"type": "Copy",
 				"dependsOn": [],
@@ -66,6 +54,18 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('foreacharray')",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"variables": {
