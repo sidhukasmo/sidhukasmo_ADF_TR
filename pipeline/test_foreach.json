@@ -6,7 +6,13 @@
 				"name": "ForEach1",
 				"type": "ForEach",
 				"dependsOn": [],
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('foreacharray')",
+						"type": "Expression"
+					}
+				}
 			},
 			{
 				"name": "Copy data1_cars",
