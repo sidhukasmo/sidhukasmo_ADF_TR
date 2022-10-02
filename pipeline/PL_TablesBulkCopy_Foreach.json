@@ -2,6 +2,36 @@
 	"name": "PL_TablesBulkCopy_Foreach",
 	"properties": {
 		"description": "Copy multiple tables in bulk with Lookup and For Each",
+		"activities": [
+			{
+				"name": "Lkmultipletabs",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "SELECT\n  *\nFROM\n  INFORMATION_SCHEMA.TABLES\nWHERE table_type = 'BASE TABLE'",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					}
+				}
+			}
+		],
 		"annotations": []
 	}
 }
