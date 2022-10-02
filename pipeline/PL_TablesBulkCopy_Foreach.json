@@ -99,11 +99,11 @@
 									"referenceName": "SqlTables",
 									"type": "DatasetReference",
 									"parameters": {
-										"Table_Name": {
+										"Table_Nm": {
 											"value": "@item().table_Nmae",
 											"type": "Expression"
 										},
-										"Schema_Name": {
+										"Schema_Nm": {
 											"value": "@item().Schema_Name",
 											"type": "Expression"
 										}
