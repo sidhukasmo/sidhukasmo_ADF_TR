@@ -109,6 +109,11 @@
 				}
 			}
 		],
+		"variables": {
+			"tablenames": {
+				"type": "Array"
+			}
+		},
 		"annotations": []
 	}
 }
