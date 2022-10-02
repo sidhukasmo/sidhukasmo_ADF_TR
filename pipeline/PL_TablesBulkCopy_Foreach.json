@@ -14,12 +14,11 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "SELECT\n  *\nFROM\n  INFORMATION_SCHEMA.TABLES\nWHERE table_type = 'BASE TABLE'",
+							"value": "SELECT\n  *\nFROM\n  ACARDB.INFORMATION_SCHEMA.TABLES\nWHERE table_type = 'BASE TABLE'",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
