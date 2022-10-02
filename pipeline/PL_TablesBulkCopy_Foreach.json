@@ -81,7 +81,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "SqlTables",
+									"referenceName": "SqlTablesInput",
 									"type": "DatasetReference",
 									"parameters": {
 										"Table_Nm": {

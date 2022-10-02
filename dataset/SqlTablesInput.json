@@ -1,5 +1,5 @@
 {
-	"name": "SqlTables",
+	"name": "SqlTablesInput",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LK_AzureSqlDatabase1_output",
