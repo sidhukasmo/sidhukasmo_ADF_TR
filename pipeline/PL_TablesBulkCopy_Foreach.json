@@ -19,7 +19,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "SELECT\n  *\nFROM\n  ACARDB.INFORMATION_SCHEMA.TABLES\nWHERE table_type = 'BASE TABLE'",
+							"value": "@variables('tablenames')",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
