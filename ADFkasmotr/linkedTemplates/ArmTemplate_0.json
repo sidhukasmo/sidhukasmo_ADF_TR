@@ -490,10 +490,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": {
-									"value": "SELECT\n  *\nFROM\n  ACARDB.INFORMATION_SCHEMA.TABLES\nWHERE table_type = 'BASE TABLE'",
-									"type": "Expression"
-								},
+								"sqlReaderQuery": "SELECT\r\n  *\r\nFROM\r\n  ACARDB.INFORMATION_SCHEMA.TABLES\r\nWHERE table_type = 'BASE TABLE'",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -545,7 +542,11 @@
 										"sink": {
 											"type": "DelimitedTextSink",
 											"storeSettings": {
-												"type": "AzureBlobStorageWriteSettings"
+												"type": "AzureBlobStorageWriteSettings",
+												"copyBehavior": {
+													"value": "@item()",
+													"type": "Expression"
+												}
 											},
 											"formatSettings": {
 												"type": "DelimitedTextWriteSettings",
