@@ -288,8 +288,14 @@
 											"referenceName": "SqlTables",
 											"type": "DatasetReference",
 											"parameters": {
-												"Table_Nm": "@item().TABLE_NAME",
-												"Schema_Nm": "@item().TABLE_SCHEMA"
+												"Table_Nm": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												},
+												"Schema_Nm": {
+													"value": "@item().SCHEMA_NAME",
+													"type": "Expression"
+												}
 											}
 										}
 									],
@@ -313,11 +319,6 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
-				},
-				"variables": {
-					"tablenames": {
-						"type": "Array"
-					}
 				},
 				"annotations": []
 			},
