@@ -1,0 +1,20 @@
+{
+	"name": "SqlTables",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LK_AzureSqlDatabase1_output",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Table_Name": {
+				"type": "string"
+			},
+			"Schema_Name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
