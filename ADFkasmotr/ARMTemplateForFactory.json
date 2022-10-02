@@ -283,7 +283,16 @@
 										{
 											"referenceName": "SqlTableGenarate",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"Tablename": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												},
+												"SchemaName": {
+													"value": "@item().TABLE_SCHEMA",
+													"type": "Expression"
+												}
+											}
 										}
 									],
 									"outputs": [
@@ -717,7 +726,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SqlTablesInput')]",
+			"name": "[concat(parameters('factoryName'), '/SqlTableGenarate')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -726,12 +735,39 @@
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
-					"Table_Nm": {
+					"Tablename": {
 						"type": "string"
 					},
-					"Schema_Nm": {
+					"SchemaName": {
 						"type": "string"
 					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().SchemaName",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().Tablename",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlTablesInput')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_AzureSqlDatabase1_output",
+					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -1043,27 +1079,6 @@
 				"[concat(variables('factoryId'), '/datasets/moviesdb')]",
 				"[concat(variables('factoryId'), '/datasets/CSVoutput')]",
 				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SqlTableGenarate')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_AzureSqlDatabase1_output",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "ExportedTables"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
 			]
 		}
 	]
