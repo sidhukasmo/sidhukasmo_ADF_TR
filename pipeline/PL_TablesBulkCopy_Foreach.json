@@ -81,18 +81,8 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "SqlTablesInput",
-									"type": "DatasetReference",
-									"parameters": {
-										"Table_Nm": {
-											"value": "@item().TABLE_NAME",
-											"type": "Expression"
-										},
-										"Schema_Nm": {
-											"value": "@item().TABLE_SCHEMA",
-											"type": "Expression"
-										}
-									}
+									"referenceName": "SqlTableGenarate",
+									"type": "DatasetReference"
 								}
 							],
 							"outputs": [

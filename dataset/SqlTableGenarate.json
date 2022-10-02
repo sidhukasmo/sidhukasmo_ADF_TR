@@ -1,0 +1,12 @@
+{
+	"name": "SqlTableGenarate",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LK_AzureSqlDatabase1_output",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
