@@ -267,7 +267,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SqlTables')]",
+			"name": "[concat(parameters('factoryName'), '/SqlTablesInput')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -286,10 +286,7 @@
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "ExportedTables"
-				}
+				"typeProperties": {}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
@@ -372,6 +369,27 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlTableGenarate')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_AzureSqlDatabase1_output",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ExportedTables"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
 			]
 		},
 		{
@@ -532,18 +550,9 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "SqlTables",
+											"referenceName": "SqlTableGenarate",
 											"type": "DatasetReference",
-											"parameters": {
-												"Table_Nm": {
-													"value": "@item().TABLE_NAME",
-													"type": "Expression"
-												},
-												"Schema_Nm": {
-													"value": "@item().TABLE_SCHEMA",
-													"type": "Expression"
-												}
-											}
+											"parameters": {}
 										}
 									],
 									"outputs": [
@@ -571,7 +580,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
-				"[concat(variables('factoryId'), '/datasets/SqlTables')]",
+				"[concat(variables('factoryId'), '/datasets/SqlTableGenarate')]",
 				"[concat(variables('factoryId'), '/datasets/GenaricCSV_Output')]"
 			]
 		},
