@@ -5,14 +5,6 @@
 			"referenceName": "LK_AzureSqlDatabase1_output",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"Table_Nm": {
-				"type": "string"
-			},
-			"Schema_Nm": {
-				"type": "string"
-			}
-		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": []
