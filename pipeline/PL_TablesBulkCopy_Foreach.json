@@ -80,11 +80,7 @@
 										"fileExtension": ".CSV"
 									}
 								},
-								"enableStaging": false,
-								"translator": {
-									"value": "@item().output.value",
-									"type": "Expression"
-								}
+								"enableStaging": false
 							},
 							"inputs": [
 								{
