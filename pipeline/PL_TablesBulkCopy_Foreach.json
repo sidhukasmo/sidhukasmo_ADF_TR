@@ -112,7 +112,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "CSVoutput",
+									"referenceName": "GenaricCSV_Output",
 									"type": "DatasetReference"
 								}
 							]
