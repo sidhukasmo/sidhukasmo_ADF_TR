@@ -86,11 +86,7 @@
 							"inputs": [
 								{
 									"referenceName": "SqlTables",
-									"type": "DatasetReference",
-									"parameters": {
-										"Table_Nm": "@item().TABLE_NAME",
-										"Schema_Nm": "@item().TABLE_SCHEMA"
-									}
+									"type": "DatasetReference"
 								}
 							],
 							"outputs": [
