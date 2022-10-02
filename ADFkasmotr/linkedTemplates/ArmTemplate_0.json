@@ -538,6 +538,11 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"variables": {
+					"tablenames": {
+						"type": "Array"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -1026,6 +1031,49 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/DF_Agr_split')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Schedule_Test1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Test_Triggers",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Month",
+						"interval": 2,
+						"startTime": "2022-10-02T16:03:00Z",
+						"endTime": "2022-10-09T00:04:08Z",
+						"timeZone": "UTC",
+						"schedule": {
+							"hours": [
+								22,
+								23,
+								1
+							],
+							"monthDays": [
+								2,
+								3,
+								9
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Test_Triggers')]"
 			]
 		}
 	]
