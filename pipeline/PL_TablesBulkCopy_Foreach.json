@@ -89,7 +89,7 @@
 											"type": "Expression"
 										},
 										"Schema_Nm": {
-											"value": "@item().SCHEMA_NAME",
+											"value": "@item().TABLE_SCHEMA",
 											"type": "Expression"
 										}
 									}
