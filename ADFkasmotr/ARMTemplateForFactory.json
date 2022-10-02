@@ -295,14 +295,8 @@
 											"referenceName": "SqlTables",
 											"type": "DatasetReference",
 											"parameters": {
-												"Table_Nm": {
-													"value": "@item().Table_Name",
-													"type": "Expression"
-												},
-												"Schema_Nm": {
-													"value": "@item().Schema_Name",
-													"type": "Expression"
-												}
+												"Table_Nm": "@item().TABLE_NAME",
+												"Schema_Nm": "@item().TABLE_SCHEMA"
 											}
 										}
 									],
