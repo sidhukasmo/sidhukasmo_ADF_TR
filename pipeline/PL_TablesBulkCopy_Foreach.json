@@ -113,7 +113,13 @@
 							"outputs": [
 								{
 									"referenceName": "GenaricCSV_Output",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@concat('Table_Schema','_','Table_Name','.CSV')",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}
