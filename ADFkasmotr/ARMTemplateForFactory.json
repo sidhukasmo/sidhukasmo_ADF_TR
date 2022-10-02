@@ -217,7 +217,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT\r\n  *\r\nFROM\r\n  ACARDB.INFORMATION_SCHEMA.TABLES\r\nWHERE table_type = 'BASE TABLE'",
+								"sqlReaderQuery": "select * from [dbo].[ExportedTables]",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
