@@ -1,0 +1,7 @@
+{
+	"name": "PL_TablesBulkCopy_Foreach",
+	"properties": {
+		"description": "Copy multiple tables in bulk with Lookup and For Each",
+		"annotations": []
+	}
+}
