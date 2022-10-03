@@ -55,7 +55,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "moviesdb",
+						"referenceName": "testout",
 						"type": "DatasetReference"
 					}
 				]

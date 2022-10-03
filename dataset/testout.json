@@ -1,5 +1,5 @@
 {
-	"name": "moviesdb",
+	"name": "testout",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LK_ABS_Input",
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "test1",
+				"fileName": "testout1",
 				"container": "testout"
 			},
 			"columnDelimiter": ",",

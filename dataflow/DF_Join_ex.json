@@ -13,7 +13,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "moviesdb",
+						"referenceName": "testout",
 						"type": "DatasetReference"
 					},
 					"name": "source2"
