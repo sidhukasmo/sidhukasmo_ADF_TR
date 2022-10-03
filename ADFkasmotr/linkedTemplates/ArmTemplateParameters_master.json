@@ -14,6 +14,12 @@
 		"LK_Sink _OUTPUT_connectionString": {
 			"value": ""
 		},
+		"TR_Storage_Event_test1_properties_TestEventTrigger_parameters_fileName": {
+			"value": "@triggerBody().fileName"
+		},
+		"TR_Storage_Event_test1_properties_typeProperties_scope": {
+			"value": "/subscriptions/757ba34a-2ccf-4eb1-85da-b102d4875ef7/resourceGroups/RG_ADF_KASMO_TR/providers/Microsoft.Storage/storageAccounts/storageaccountkasmo1"
+		},
 		"containerUri": {
 			"value": ""
 		},

@@ -670,7 +670,7 @@
 					"cancelAfter": {}
 				},
 				"parameters": {
-					"filename": {
+					"fileName": {
 						"type": "string"
 					}
 				},
