@@ -49,13 +49,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "CSVinput",
+						"referenceName": "moviesdb",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "moviesdb",
+						"referenceName": "CSVoutput",
 						"type": "DatasetReference"
 					}
 				]
