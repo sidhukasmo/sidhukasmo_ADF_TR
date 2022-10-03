@@ -1,5 +1,5 @@
 {
-	"name": "Cars_Input",
+	"name": "testin",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LK_ABS_Input",
