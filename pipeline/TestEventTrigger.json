@@ -49,7 +49,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "Cars_Input",
+						"referenceName": "CSVinput",
 						"type": "DatasetReference"
 					}
 				],
