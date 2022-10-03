@@ -385,14 +385,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "CSVinput",
+								"referenceName": "moviesdb",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "moviesdb",
+								"referenceName": "CSVoutput",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -411,8 +411,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CSVinput')]",
-				"[concat(variables('factoryId'), '/datasets/moviesdb')]"
+				"[concat(variables('factoryId'), '/datasets/moviesdb')]",
+				"[concat(variables('factoryId'), '/datasets/CSVoutput')]"
 			]
 		},
 		{
@@ -908,6 +908,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "test",
 						"container": "azureblob-container"
 					},
 					"columnDelimiter": ",",
@@ -991,7 +992,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Stopped",
+				"runtimeState": "Started",
 				"pipelines": [
 					{
 						"pipelineReference": {

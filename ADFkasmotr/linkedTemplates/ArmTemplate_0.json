@@ -358,6 +358,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "test",
 						"container": "azureblob-container"
 					},
 					"columnDelimiter": ",",
@@ -650,14 +651,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "CSVinput",
+								"referenceName": "moviesdb",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "moviesdb",
+								"referenceName": "CSVoutput",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -676,8 +677,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CSVinput')]",
-				"[concat(variables('factoryId'), '/datasets/moviesdb')]"
+				"[concat(variables('factoryId'), '/datasets/moviesdb')]",
+				"[concat(variables('factoryId'), '/datasets/CSVoutput')]"
 			]
 		},
 		{
