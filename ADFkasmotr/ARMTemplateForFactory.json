@@ -385,14 +385,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "moviesdb",
+								"referenceName": "Cars_Input",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "CSVoutput",
+								"referenceName": "moviesdb",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -411,8 +411,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/moviesdb')]",
-				"[concat(variables('factoryId'), '/datasets/CSVoutput')]"
+				"[concat(variables('factoryId'), '/datasets/Cars_Input')]",
+				"[concat(variables('factoryId'), '/datasets/moviesdb')]"
 			]
 		},
 		{
@@ -766,8 +766,8 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "test",
-						"container": "azureblob-container"
+						"fileName": "testin",
+						"container": "testin"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
@@ -908,8 +908,8 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "test",
-						"container": "azureblob-container"
+						"fileName": "test1",
+						"container": "testout"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
