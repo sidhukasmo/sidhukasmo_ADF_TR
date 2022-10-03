@@ -385,7 +385,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "Cars_Input",
+								"referenceName": "CSVinput",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -411,7 +411,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Cars_Input')]",
+				"[concat(variables('factoryId'), '/datasets/CSVinput')]",
 				"[concat(variables('factoryId'), '/datasets/moviesdb')]"
 			]
 		},
