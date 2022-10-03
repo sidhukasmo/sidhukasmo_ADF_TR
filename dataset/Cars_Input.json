@@ -17,31 +17,6 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": [
-			{
-				"name": "Make",
-				"type": "String"
-			},
-			{
-				"name": "Model",
-				"type": "String"
-			},
-			{
-				"name": "Type",
-				"type": "String"
-			},
-			{
-				"name": "Origin",
-				"type": "String"
-			},
-			{
-				"name": "DriveTrain",
-				"type": "String"
-			},
-			{
-				"name": "Length",
-				"type": "String"
-			}
-		]
+		"schema": []
 	}
 }
