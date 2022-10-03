@@ -18,14 +18,6 @@
 		"LK_Sink _OUTPUT_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LK_Sink _OUTPUT'"
-		},
-		"TR_Stroge_event_Test_properties_TestEventTrigger_parameters_filename": {
-			"type": "string",
-			"defaultValue": "@pipline().filename"
-		},
-		"TR_Stroge_event_Test_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/757ba34a-2ccf-4eb1-85da-b102d4875ef7/resourceGroups/RG_ADF_KASMO_TR/providers/Microsoft.Storage/storageAccounts/storageaccountkasmo1"
 		}
 	},
 	"variables": {
@@ -385,14 +377,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "Cars_Input",
+								"referenceName": "testin",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "moviesdb",
+								"referenceName": "testout",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -411,8 +403,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Cars_Input')]",
-				"[concat(variables('factoryId'), '/datasets/moviesdb')]"
+				"[concat(variables('factoryId'), '/datasets/testin')]",
+				"[concat(variables('factoryId'), '/datasets/testout')]"
 			]
 		},
 		{
@@ -492,7 +484,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "Cars_Input",
+								"referenceName": "testin",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -513,7 +505,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Cars_Input')]",
+				"[concat(variables('factoryId'), '/datasets/testin')]",
 				"[concat(variables('factoryId'), '/datasets/CSVoutput')]"
 			]
 		},
@@ -753,7 +745,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Cars_Input')]",
+			"name": "[concat(parameters('factoryName'), '/testin')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -766,7 +758,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "testin",
+						"fileName": "testin1",
 						"container": "testin"
 					},
 					"columnDelimiter": ",",
@@ -895,7 +887,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/moviesdb')]",
+			"name": "[concat(parameters('factoryName'), '/testout')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -908,7 +900,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "test1",
+						"fileName": "testout1",
 						"container": "testout"
 					},
 					"columnDelimiter": ",",
@@ -985,38 +977,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TR_Stroge_event_Test')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "TestEventTrigger",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"filename": "[parameters('TR_Stroge_event_Test_properties_TestEventTrigger_parameters_filename')]"
-						}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/azureblob-container/blobs/",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('TR_Stroge_event_Test_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/TestEventTrigger')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DF_Agr_split')]",
@@ -1124,7 +1084,7 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "moviesdb",
+								"referenceName": "testout",
 								"type": "DatasetReference"
 							},
 							"name": "source2"
@@ -1198,7 +1158,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CSVinput')]",
-				"[concat(variables('factoryId'), '/datasets/moviesdb')]",
+				"[concat(variables('factoryId'), '/datasets/testout')]",
 				"[concat(variables('factoryId'), '/datasets/CSVoutput')]",
 				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
 			]

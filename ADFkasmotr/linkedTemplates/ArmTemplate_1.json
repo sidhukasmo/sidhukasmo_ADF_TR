@@ -6,14 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "ADFkasmotr"
-		},
-		"TR_Stroge_event_Test_properties_TestEventTrigger_parameters_filename": {
-			"type": "string",
-			"defaultValue": "@pipline().filename"
-		},
-		"TR_Stroge_event_Test_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/757ba34a-2ccf-4eb1-85da-b102d4875ef7/resourceGroups/RG_ADF_KASMO_TR/providers/Microsoft.Storage/storageAccounts/storageaccountkasmo1"
 		}
 	},
 	"variables": {
@@ -112,36 +104,6 @@
 					"cancelAfter": {}
 				},
 				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TR_Stroge_event_Test')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "TestEventTrigger",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"filename": "[parameters('TR_Stroge_event_Test_properties_TestEventTrigger_parameters_filename')]"
-						}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/azureblob-container/blobs/",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('TR_Stroge_event_Test_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
 			},
 			"dependsOn": []
 		}

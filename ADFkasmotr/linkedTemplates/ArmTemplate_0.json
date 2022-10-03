@@ -203,7 +203,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Cars_Input')]",
+			"name": "[concat(parameters('factoryName'), '/testin')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -216,7 +216,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "testin",
+						"fileName": "testin1",
 						"container": "testin"
 					},
 					"columnDelimiter": ",",
@@ -345,7 +345,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/moviesdb')]",
+			"name": "[concat(parameters('factoryName'), '/testout')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -358,7 +358,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "test1",
+						"fileName": "testout1",
 						"container": "testout"
 					},
 					"columnDelimiter": ",",
@@ -651,14 +651,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "Cars_Input",
+								"referenceName": "testin",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "moviesdb",
+								"referenceName": "testout",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -677,8 +677,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Cars_Input')]",
-				"[concat(variables('factoryId'), '/datasets/moviesdb')]"
+				"[concat(variables('factoryId'), '/datasets/testin')]",
+				"[concat(variables('factoryId'), '/datasets/testout')]"
 			]
 		},
 		{
@@ -734,7 +734,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "Cars_Input",
+								"referenceName": "testin",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -755,7 +755,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Cars_Input')]",
+				"[concat(variables('factoryId'), '/datasets/testin')]",
 				"[concat(variables('factoryId'), '/datasets/CSVoutput')]"
 			]
 		},
@@ -985,7 +985,7 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "moviesdb",
+								"referenceName": "testout",
 								"type": "DatasetReference"
 							},
 							"name": "source2"
@@ -1059,7 +1059,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CSVinput')]",
-				"[concat(variables('factoryId'), '/datasets/moviesdb')]",
+				"[concat(variables('factoryId'), '/datasets/testout')]",
 				"[concat(variables('factoryId'), '/datasets/CSVoutput')]",
 				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
 			]
