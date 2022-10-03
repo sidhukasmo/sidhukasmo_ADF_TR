@@ -2,7 +2,7 @@
 	"name": "TR_Stroge_event_Test",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Stopped",
+		"runtimeState": "Started",
 		"pipelines": [
 			{
 				"pipelineReference": {
