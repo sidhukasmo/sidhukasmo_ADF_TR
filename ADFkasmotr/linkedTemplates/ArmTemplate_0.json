@@ -216,7 +216,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "cars.csv",
+						"fileName": "test",
 						"container": "azureblob-container"
 					},
 					"columnDelimiter": ",",
@@ -224,32 +224,7 @@
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": [
-					{
-						"name": "Make",
-						"type": "String"
-					},
-					{
-						"name": "Model",
-						"type": "String"
-					},
-					{
-						"name": "Type",
-						"type": "String"
-					},
-					{
-						"name": "Origin",
-						"type": "String"
-					},
-					{
-						"name": "DriveTrain",
-						"type": "String"
-					},
-					{
-						"name": "Length",
-						"type": "String"
-					}
-				]
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
@@ -428,7 +403,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
+						"name": "Copy data Ex",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -468,7 +443,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "Cars_Input",
+								"referenceName": "CSVinput",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -489,7 +464,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Cars_Input')]",
+				"[concat(variables('factoryId'), '/datasets/CSVinput')]",
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]"
 			]
 		},
