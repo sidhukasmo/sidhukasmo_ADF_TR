@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "Event_TR_Copydata",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
