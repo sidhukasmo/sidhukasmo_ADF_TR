@@ -74,7 +74,7 @@
 				"     negate:false,",
 				"     broadcast: 'auto')~> exists1",
 				"exists1 alterRow(updateIf(true())) ~> alterRowUpdate",
-				"exists1 alterRow() ~> alterRowInsert",
+				"exists1 alterRow(insertIf(true())) ~> alterRowInsert",
 				"alterRowInsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
