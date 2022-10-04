@@ -20,13 +20,24 @@
 					"description": "Add Ref dataset"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DT_DimCustomer",
+						"type": "DatasetReference"
+					},
+					"name": "sink1SCDT1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "exists1"
 				},
 				{
-					"name": "alterRow2"
+					"name": "alterRowUpdate"
+				},
+				{
+					"name": "alterRowInsert"
 				}
 			],
 			"scriptLines": [
@@ -55,7 +66,33 @@
 				"customerSource, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
 				"     negate:false,",
 				"     broadcast: 'auto')~> exists1",
-				"exists1 alterRow() ~> alterRow2"
+				"exists1 alterRow(updateIf(true())) ~> alterRowUpdate",
+				"exists1 alterRow() ~> alterRowInsert",
+				"alterRowInsert sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Cust_ID as integer,",
+				"          Customer_Name as string,",
+				"          Customer_location as string,",
+				"          Purchase_Amount as integer,",
+				"          Date_inserted as date,",
+				"          Date_Updated as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:['Cust_ID'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          Cust_ID,",
+				"          Customer_Name,",
+				"          Customer_location,",
+				"          Purchase_Amount",
+				"     )) ~> sink1SCDT1"
 			]
 		}
 	}
