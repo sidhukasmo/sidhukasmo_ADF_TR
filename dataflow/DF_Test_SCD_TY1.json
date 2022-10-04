@@ -34,6 +34,9 @@
 				},
 				{
 					"name": "existsUpdate"
+				},
+				{
+					"name": "alterRowUpdate"
 				}
 			],
 			"scriptLines": [
@@ -65,6 +68,7 @@
 				"source1, source2 exists(source1@Cust_ID == source2@Cust_ID,",
 				"     negate:false,",
 				"     broadcast: 'auto')~> existsUpdate",
+				"existsUpdate alterRow(updateIf(true())) ~> alterRowUpdate",
 				"existsInsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
