@@ -49,7 +49,7 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> CustomerDim",
-				"customerSource lookup(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"customerSource, CustomerDim lookup(customerSource@Cust_ID == CustomerDim@Cust_ID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> lookupDimCustomer"
