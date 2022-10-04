@@ -32,9 +32,6 @@
 			],
 			"transformations": [
 				{
-					"name": "existsNO"
-				},
-				{
 					"name": "alterRow1Update"
 				},
 				{
@@ -64,10 +61,7 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> CustomerDim",
-				"lookup1Source, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
-				"     negate:true,",
-				"     broadcast: 'auto')~> existsNO",
-				"existsNO alterRow(updateIf(false()),",
+				"lookup1Source alterRow(updateIf(false()),",
 				"     insertIf(true())) ~> alterRow1Update",
 				"customerSource, CustomerDim lookup(customerSource@Cust_ID == CustomerDim@Cust_ID,",
 				"     multiple: false,",
@@ -85,8 +79,8 @@
 				"     ),",
 				"     deletable:false,",
 				"     insertable:false,",
-				"     updateable:true,",
-				"     upsertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
 				"     keys:['Cust_ID'],",
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
