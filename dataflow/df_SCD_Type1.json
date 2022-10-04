@@ -24,6 +24,9 @@
 			"transformations": [
 				{
 					"name": "lookupDimCustomer"
+				},
+				{
+					"name": "exists1"
 				}
 			],
 			"scriptLines": [
@@ -52,7 +55,10 @@
 				"customerSource, CustomerDim lookup(customerSource@Cust_ID == CustomerDim@Cust_ID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookupDimCustomer"
+				"     broadcast: 'auto')~> lookupDimCustomer",
+				"customerSource, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> exists1"
 			]
 		}
 	}
