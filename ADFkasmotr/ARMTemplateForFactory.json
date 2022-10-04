@@ -202,35 +202,12 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "df_SCD_Type1",
-						"type": "ExecuteDataFlow",
+						"name": "Wait1",
+						"type": "Wait",
 						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
 						"userProperties": [],
 						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_SCD_Type1",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"customerSource": {},
-									"CustomerDim": {},
-									"sink1Insert": {},
-									"sink1Update": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
+							"waitTimeInSeconds": 1
 						}
 					}
 				],
@@ -240,9 +217,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_SCD_Type1')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PL_TablesBulkCopy_Foreach')]",
@@ -481,14 +456,14 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Test_Triggers')]",
+			"name": "[concat(parameters('factoryName'), '/Test_SCD_TY1')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Test Copy data Triggers",
-						"type": "Copy",
+						"name": "DF_Test_SCD_TY1",
+						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -499,52 +474,24 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
+							"dataflow": {
+								"referenceName": "DF_Test_SCD_TY1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink1Insert": {},
+									"sinkUpdate": {}
 								}
 							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".CSV"
-								}
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
 							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "testin",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "CSVoutput",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -554,8 +501,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/testin')]",
-				"[concat(variables('factoryId'), '/datasets/CSVoutput')]"
+				"[concat(variables('factoryId'), '/dataflows/DF_Test_SCD_TY1')]"
 			]
 		},
 		{
@@ -795,46 +741,6 @@
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DT_CustomerSource')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_AzureSqlDatabase1_output",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Cust_ID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Customer_Name",
-						"type": "varchar"
-					},
-					{
-						"name": "Customer_location",
-						"type": "varchar"
-					},
-					{
-						"name": "Purchase_Amount",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Customer"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DT_Customer_Source')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1341,7 +1247,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_SCD_Type1')]",
+			"name": "[concat(parameters('factoryName'), '/DF_Test_SCD_TY1')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1353,16 +1259,14 @@
 								"referenceName": "DT_CustomerSource",
 								"type": "DatasetReference"
 							},
-							"name": "customerSource",
-							"description": "Import data "
+							"name": "source1"
 						},
 						{
 							"dataset": {
 								"referenceName": "DT_DimCustomer",
 								"type": "DatasetReference"
 							},
-							"name": "CustomerDim",
-							"description": "Add Ref dataset"
+							"name": "source2"
 						}
 					],
 					"sinks": [
@@ -1378,18 +1282,18 @@
 								"referenceName": "DT_DimCustomer",
 								"type": "DatasetReference"
 							},
-							"name": "sink1Update"
+							"name": "sinkUpdate"
 						}
 					],
 					"transformations": [
 						{
-							"name": "existsNO"
+							"name": "existsInsert"
 						},
 						{
-							"name": "alterRowInsert"
+							"name": "existsUpdate"
 						},
 						{
-							"name": "alterRow1Update"
+							"name": "alterRowUpdate"
 						}
 					],
 					"scriptLines": [
@@ -1402,7 +1306,7 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> customerSource",
+						"     format: 'table') ~> source1",
 						"source(output(",
 						"          Cust_ID as integer,",
 						"          Customer_Name as string,",
@@ -1414,13 +1318,15 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> CustomerDim",
-						"customerSource, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
+						"     format: 'table') ~> source2",
+						"source1, source2 exists(source1@Cust_ID == source2@Cust_ID,",
 						"     negate:true,",
-						"     broadcast: 'auto')~> existsNO",
-						"existsNO alterRow(insertIf(true())) ~> alterRowInsert",
-						"existsNO alterRow(updateIf(false())) ~> alterRow1Update",
-						"alterRowInsert sink(allowSchemaDrift: true,",
+						"     broadcast: 'auto')~> existsInsert",
+						"source1, source2 exists(source1@Cust_ID == source2@Cust_ID,",
+						"     negate:false,",
+						"     broadcast: 'auto')~> existsUpdate",
+						"existsUpdate alterRow(updateIf(true())) ~> alterRowUpdate",
+						"existsInsert sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
 						"          Cust_ID as integer,",
@@ -1432,9 +1338,8 @@
 						"     ),",
 						"     deletable:false,",
 						"     insertable:true,",
-						"     updateable:true,",
-						"     upsertable:true,",
-						"     keys:['Cust_ID'],",
+						"     updateable:false,",
+						"     upsertable:false,",
 						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
@@ -1445,7 +1350,7 @@
 						"          Customer_location,",
 						"          Purchase_Amount",
 						"     )) ~> sink1Insert",
-						"alterRow1Update sink(allowSchemaDrift: true,",
+						"alterRowUpdate sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
 						"          Cust_ID as integer,",
@@ -1469,7 +1374,7 @@
 						"          Customer_Name,",
 						"          Customer_location,",
 						"          Purchase_Amount",
-						"     )) ~> sink1Update"
+						"     )) ~> sinkUpdate"
 					]
 				}
 			},
