@@ -28,6 +28,9 @@
 				},
 				{
 					"name": "exists1"
+				},
+				{
+					"name": "alterRow1"
 				}
 			],
 			"scriptLines": [
@@ -59,7 +62,9 @@
 				"     broadcast: 'auto')~> lookup1Source",
 				"customerSource, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
 				"     negate:true,",
-				"     broadcast: 'auto')~> exists1"
+				"     broadcast: 'auto')~> exists1",
+				"exists1 alterRow(insertIf(true()),",
+				"     updateIf(false())) ~> alterRow1"
 			]
 		}
 	}
