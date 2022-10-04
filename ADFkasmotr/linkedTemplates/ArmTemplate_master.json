@@ -19,14 +19,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LK_Sink _OUTPUT'"
 		},
-		"TR_Storage_Event_test1_properties_TestEventTrigger_parameters_fileName": {
-			"type": "string",
-			"defaultValue": "@triggerBody().fileName"
-		},
-		"TR_Storage_Event_test1_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/757ba34a-2ccf-4eb1-85da-b102d4875ef7/resourceGroups/RG_ADF_KASMO_TR/providers/Microsoft.Storage/storageAccounts/storageaccountkasmo1"
-		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -80,12 +72,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"TR_Storage_Event_test1_properties_TestEventTrigger_parameters_fileName": {
-						"value": "[parameters('TR_Storage_Event_test1_properties_TestEventTrigger_parameters_fileName')]"
-					},
-					"TR_Storage_Event_test1_properties_typeProperties_scope": {
-						"value": "[parameters('TR_Storage_Event_test1_properties_typeProperties_scope')]"
 					}
 				}
 			},

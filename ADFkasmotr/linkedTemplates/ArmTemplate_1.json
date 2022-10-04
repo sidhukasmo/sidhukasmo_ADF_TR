@@ -6,20 +6,322 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "ADFkasmotr"
-		},
-		"TR_Storage_Event_test1_properties_TestEventTrigger_parameters_fileName": {
-			"type": "string",
-			"defaultValue": "@triggerBody().fileName"
-		},
-		"TR_Storage_Event_test1_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/757ba34a-2ccf-4eb1-85da-b102d4875ef7/resourceGroups/RG_ADF_KASMO_TR/providers/Microsoft.Storage/storageAccounts/storageaccountkasmo1"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_Agr_split')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CSVinput",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "CSVoutput",
+								"type": "DatasetReference"
+							},
+							"name": "SKColumnCount",
+							"rejectedDataLinkedService": {
+								"referenceName": "LK_ABS_Input",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"dataset": {
+								"referenceName": "CSVoutput",
+								"type": "DatasetReference"
+							},
+							"name": "SKColumnSplit",
+							"rejectedDataLinkedService": {
+								"referenceName": "LK_ABS_Input",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "DCyear"
+						},
+						{
+							"name": "aggregateYear",
+							"description": "Aaggregate Year"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          movieId as string,",
+						"          title as string,",
+						"          genres as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 derive(Year = trim(right(title, 6),'()'),",
+						"          title = trim(title,right(title,6))) ~> DCyear",
+						"DCyear aggregate(groupBy(Year),",
+						"     ty = count(toInteger(Year))) ~> aggregateYear",
+						"aggregateYear sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['Movies_Count_Year'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 2,",
+						"     outputAssertFailedRows: true,",
+						"     assertFailure_container: 'output',",
+						"     partitionBy('hash', 1)) ~> SKColumnCount",
+						"DCyear sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['movies_Split'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     outputAssertFailedRows: true,",
+						"     assertFailure_container: 'output',",
+						"     partitionBy('hash', 1)) ~> SKColumnSplit"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_Join_ex')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CSVinput",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "testout",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "CSVoutput",
+								"type": "DatasetReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "LK_ABS_Input",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "joininner1"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     title_trim as string (trim(title))",
+						"}",
+						"source(output(",
+						"          movieId as string,",
+						"          title as string,",
+						"          genres as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     limit: 100,",
+						"     ignoreNoFilesFound: false,",
+						"     rowUrlColumn: 'New_cars1') ~> source1",
+						"source(output(",
+						"          movie as string,",
+						"          title as string,",
+						"          genres as string,",
+						"          year as string,",
+						"          Rating as string,",
+						"          RottenTomato as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source2",
+						"source1 derive(trim_title1 = trim(title)) ~> derivedColumn1",
+						"source2 derive(title_trim2 = trim(title)) ~> derivedColumn2",
+						"derivedColumn1, derivedColumn2 join(source1@title == source2@title,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joininner1",
+						"joininner1 sink(allowSchemaDrift: true,",
+						"     validateSchema: true,",
+						"     partitionFileNames:['moviesjoinOPT'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     quoteAll: true,",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_SCD_Type1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DT_CustomerSource",
+								"type": "DatasetReference"
+							},
+							"name": "customerSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "DT_DimCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "CustomerDim",
+							"description": "Add Ref dataset"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DT_DimCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "sink1Insert"
+						},
+						{
+							"dataset": {
+								"referenceName": "DT_DimCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "sink1Update"
+						}
+					],
+					"transformations": [
+						{
+							"name": "exists1"
+						},
+						{
+							"name": "alterRowUpdate"
+						},
+						{
+							"name": "alterRowInsert"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Cust_ID as integer,",
+						"          Customer_Name as string,",
+						"          Customer_location as string,",
+						"          Purchase_Amount as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> customerSource",
+						"source(output(",
+						"          Cust_ID as integer,",
+						"          Customer_Name as string,",
+						"          Customer_location as string,",
+						"          Purchase_Amount as integer,",
+						"          Date_inserted as date,",
+						"          Date_Updated as date",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> CustomerDim",
+						"customerSource, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
+						"     negate:false,",
+						"     broadcast: 'auto')~> exists1",
+						"exists1 alterRow(updateIf(true())) ~> alterRowUpdate",
+						"exists1 alterRow(insertIf(true())) ~> alterRowInsert",
+						"alterRowInsert sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Cust_ID as integer,",
+						"          Customer_Name as string,",
+						"          Customer_location as string,",
+						"          Purchase_Amount as integer,",
+						"          Date_inserted as date,",
+						"          Date_Updated as date",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:['Cust_ID'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          Cust_ID,",
+						"          Customer_Name,",
+						"          Customer_location,",
+						"          Purchase_Amount",
+						"     )) ~> sink1Insert",
+						"alterRowUpdate sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Cust_ID as integer,",
+						"          Customer_Name as string,",
+						"          Customer_location as string,",
+						"          Purchase_Amount as integer,",
+						"          Date_inserted as date,",
+						"          Date_Updated as date",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:['Cust_ID'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          Cust_ID,",
+						"          Customer_Name,",
+						"          Customer_location,",
+						"          Purchase_Amount",
+						"     )) ~> sink1Update"
+					]
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PL_Join_2datasets')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -66,7 +368,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DF_Join_ex')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PL_Movies_Split_Count')]",
@@ -113,37 +417,58 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DF_Agr_split')]"
+			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TR_Storage_Event_test1')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
+			"name": "[concat(parameters('factoryName'), '/PL_SCD_Type1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
+				"activities": [
 					{
-						"pipelineReference": {
-							"referenceName": "TestEventTrigger",
-							"type": "PipelineReference"
+						"name": "df_SCD_Type1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
 						},
-						"parameters": {
-							"fileName": "[parameters('TR_Storage_Event_test1_properties_TestEventTrigger_parameters_fileName')]"
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_SCD_Type1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"customerSource": {},
+									"CustomerDim": {},
+									"sink1Insert": {},
+									"sink1Update": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
 						}
 					}
 				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/testin/blobs/",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('TR_Storage_Event_test1_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_SCD_Type1')]"
+			]
 		}
 	]
 }

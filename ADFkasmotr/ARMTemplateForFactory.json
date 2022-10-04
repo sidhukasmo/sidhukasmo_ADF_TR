@@ -18,14 +18,6 @@
 		"LK_Sink _OUTPUT_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LK_Sink _OUTPUT'"
-		},
-		"TR_Storage_Event_test1_properties_TestEventTrigger_parameters_fileName": {
-			"type": "string",
-			"defaultValue": "@triggerBody().fileName"
-		},
-		"TR_Storage_Event_test1_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/757ba34a-2ccf-4eb1-85da-b102d4875ef7/resourceGroups/RG_ADF_KASMO_TR/providers/Microsoft.Storage/storageAccounts/storageaccountkasmo1"
 		}
 	},
 	"variables": {
@@ -753,34 +745,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/testin')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_ABS_Input",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "testin1",
-						"container": "testin"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/GenaricCSV_Output')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -886,6 +850,34 @@
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/testin')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_ABS_Input",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "testin",
+						"container": "testin"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
 				"schema": []
@@ -1172,35 +1164,277 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TR_Storage_Event_test1')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
+			"name": "[concat(parameters('factoryName'), '/df_SCD_Type1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "TestEventTrigger",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"fileName": "[parameters('TR_Storage_Event_test1_properties_TestEventTrigger_parameters_fileName')]"
-						}
-					}
-				],
-				"type": "BlobEventsTrigger",
+				"type": "MappingDataFlow",
 				"typeProperties": {
-					"blobPathBeginsWith": "/testin/blobs/",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('TR_Storage_Event_test1_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DT_CustomerSource",
+								"type": "DatasetReference"
+							},
+							"name": "customerSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "DT_DimCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "CustomerDim",
+							"description": "Add Ref dataset"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DT_DimCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "sink1Insert"
+						},
+						{
+							"dataset": {
+								"referenceName": "DT_DimCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "sink1Update"
+						}
+					],
+					"transformations": [
+						{
+							"name": "exists1"
+						},
+						{
+							"name": "alterRowUpdate"
+						},
+						{
+							"name": "alterRowInsert"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Cust_ID as integer,",
+						"          Customer_Name as string,",
+						"          Customer_location as string,",
+						"          Purchase_Amount as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> customerSource",
+						"source(output(",
+						"          Cust_ID as integer,",
+						"          Customer_Name as string,",
+						"          Customer_location as string,",
+						"          Purchase_Amount as integer,",
+						"          Date_inserted as date,",
+						"          Date_Updated as date",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> CustomerDim",
+						"customerSource, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
+						"     negate:false,",
+						"     broadcast: 'auto')~> exists1",
+						"exists1 alterRow(updateIf(true())) ~> alterRowUpdate",
+						"exists1 alterRow(insertIf(true())) ~> alterRowInsert",
+						"alterRowInsert sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Cust_ID as integer,",
+						"          Customer_Name as string,",
+						"          Customer_location as string,",
+						"          Purchase_Amount as integer,",
+						"          Date_inserted as date,",
+						"          Date_Updated as date",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:['Cust_ID'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          Cust_ID,",
+						"          Customer_Name,",
+						"          Customer_location,",
+						"          Purchase_Amount",
+						"     )) ~> sink1Insert",
+						"alterRowUpdate sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Cust_ID as integer,",
+						"          Customer_Name as string,",
+						"          Customer_location as string,",
+						"          Purchase_Amount as integer,",
+						"          Date_inserted as date,",
+						"          Date_Updated as date",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:['Cust_ID'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          Cust_ID,",
+						"          Customer_Name,",
+						"          Customer_location,",
+						"          Purchase_Amount",
+						"     )) ~> sink1Update"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/TestEventTrigger')]"
+				"[concat(variables('factoryId'), '/datasets/DT_CustomerSource')]",
+				"[concat(variables('factoryId'), '/datasets/DT_DimCustomer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DT_CustomerSource')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_AzureSqlDatabase1_output",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Cust_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Customer_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Customer_location",
+						"type": "varchar"
+					},
+					{
+						"name": "Purchase_Amount",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Customer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DT_DimCustomer')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_AzureSqlDatabase1_output",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Cust_ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Customer_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Customer_location",
+						"type": "varchar"
+					},
+					{
+						"name": "Purchase_Amount",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Date_inserted",
+						"type": "date"
+					},
+					{
+						"name": "Date_Updated",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Dim_Customer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_SCD_Type1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_SCD_Type1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_SCD_Type1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"customerSource": {},
+									"CustomerDim": {},
+									"sink1Insert": {},
+									"sink1Update": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_SCD_Type1')]"
 			]
 		}
 	]
