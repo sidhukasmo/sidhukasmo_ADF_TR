@@ -19,7 +19,15 @@
 					"name": "source2"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DT_DimCustomer",
+						"type": "DatasetReference"
+					},
+					"name": "sink1Insert"
+				}
+			],
 			"transformations": [
 				{
 					"name": "exists1"
@@ -54,7 +62,31 @@
 				"source1, source2 exists(source1@Cust_ID == source2@Cust_ID,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> exists1",
-				"exists1 alterRow(insertIf(true())) ~> alterRow1"
+				"exists1 alterRow(insertIf(true())) ~> alterRow1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Cust_ID as integer,",
+				"          Customer_Name as string,",
+				"          Customer_location as string,",
+				"          Purchase_Amount as integer,",
+				"          Date_inserted as date,",
+				"          Date_Updated as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          Cust_ID,",
+				"          Customer_Name,",
+				"          Customer_location,",
+				"          Purchase_Amount",
+				"     )) ~> sink1Insert"
 			]
 		}
 	}
