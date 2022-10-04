@@ -26,14 +26,14 @@
 						"referenceName": "DT_DimCustomer",
 						"type": "DatasetReference"
 					},
-					"name": "sink1SCDT1"
+					"name": "sink1Insert"
 				},
 				{
 					"dataset": {
 						"referenceName": "DT_DimCustomer",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "sink1Update"
 				}
 			],
 			"transformations": [
@@ -99,7 +99,7 @@
 				"          Customer_Name,",
 				"          Customer_location,",
 				"          Purchase_Amount",
-				"     )) ~> sink1SCDT1",
+				"     )) ~> sink1Insert",
 				"alterRowUpdate sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -124,7 +124,7 @@
 				"          Customer_Name,",
 				"          Customer_location,",
 				"          Purchase_Amount",
-				"     )) ~> sink1"
+				"     )) ~> sink1Update"
 			]
 		}
 	}
