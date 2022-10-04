@@ -3,68 +3,11 @@
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [
-				{
-					"dataset": {
-						"referenceName": "DT_CustomerSource",
-						"type": "DatasetReference"
-					},
-					"name": "customerSource",
-					"description": "Import data "
-				},
-				{
-					"dataset": {
-						"referenceName": "DT_DimCustomer",
-						"type": "DatasetReference"
-					},
-					"name": "CustomerDim",
-					"description": "Add Ref dataset"
-				}
-			],
+			"sources": [],
 			"sinks": [],
-			"transformations": [
-				{
-					"name": "lookup1Source"
-				},
-				{
-					"name": "exists1"
-				},
-				{
-					"name": "alterRow1"
-				}
-			],
+			"transformations": [],
 			"scriptLines": [
-				"source(output(",
-				"          Cust_ID as integer,",
-				"          Customer_Name as string,",
-				"          Customer_location as string,",
-				"          Purchase_Amount as integer",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> customerSource",
-				"source(output(",
-				"          Cust_ID as integer,",
-				"          Customer_Name as string,",
-				"          Customer_location as string,",
-				"          Purchase_Amount as integer,",
-				"          Date_inserted as date,",
-				"          Date_Updated as date",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> CustomerDim",
-				"customerSource, CustomerDim lookup(customerSource@Cust_ID == CustomerDim@Cust_ID,",
-				"     multiple: false,",
-				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup1Source",
-				"customerSource, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
-				"     negate:true,",
-				"     broadcast: 'auto')~> exists1",
-				"exists1 alterRow(insertIf(true()),",
-				"     updateIf(false())) ~> alterRow1"
+				""
 			]
 		}
 	}
