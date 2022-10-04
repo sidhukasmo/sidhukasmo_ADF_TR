@@ -201,7 +201,8 @@
 								"referenceName": "DT_CustomerSource",
 								"type": "DatasetReference"
 							},
-							"name": "customerSource"
+							"name": "customerSource",
+							"description": "Import data "
 						},
 						{
 							"dataset": {
@@ -267,8 +268,8 @@
 						"          Date_Updated as date",
 						"     ),",
 						"     deletable:false,",
-						"     insertable:false,",
-						"     updateable:false,",
+						"     insertable:true,",
+						"     updateable:true,",
 						"     upsertable:true,",
 						"     keys:['Cust_ID'],",
 						"     format: 'table',",
