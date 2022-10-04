@@ -23,13 +23,10 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "lookupDimCustomer"
-				},
-				{
 					"name": "exists1"
 				},
 				{
-					"name": "alterRow1"
+					"name": "alterRow2"
 				}
 			],
 			"scriptLines": [
@@ -55,14 +52,10 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> CustomerDim",
-				"customerSource, CustomerDim lookup(customerSource@Cust_ID == CustomerDim@Cust_ID,",
-				"     multiple: false,",
-				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookupDimCustomer",
 				"customerSource, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
-				"     negate:true,",
+				"     negate:false,",
 				"     broadcast: 'auto')~> exists1",
-				"exists1 alterRow(insertIf(true())) ~> alterRow1"
+				"exists1 alterRow() ~> alterRow2"
 			]
 		}
 	}
