@@ -1,5 +1,5 @@
 {
-	"name": "DS_DimCustomer",
+	"name": "DT_DimCustomer",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LK_AzureSqlDatabase1_output",
