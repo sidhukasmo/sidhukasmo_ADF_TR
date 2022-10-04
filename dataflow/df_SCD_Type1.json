@@ -27,13 +27,6 @@
 						"referenceName": "DT_DimCustomer",
 						"type": "DatasetReference"
 					},
-					"name": "sink1Insert"
-				},
-				{
-					"dataset": {
-						"referenceName": "DT_DimCustomer",
-						"type": "DatasetReference"
-					},
 					"name": "sink1Update"
 				}
 			],
@@ -42,10 +35,10 @@
 					"name": "existsNO"
 				},
 				{
-					"name": "alterRowInsert"
+					"name": "alterRow1Update"
 				},
 				{
-					"name": "alterRow1Update"
+					"name": "lookup1Source"
 				}
 			],
 			"scriptLines": [
@@ -71,36 +64,14 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> CustomerDim",
-				"customerSource, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
+				"lookup1Source, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> existsNO",
-				"existsNO alterRow(insertIf(true())) ~> alterRowInsert",
 				"existsNO alterRow(updateIf(false())) ~> alterRow1Update",
-				"alterRowInsert sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          Cust_ID as integer,",
-				"          Customer_Name as string,",
-				"          Customer_location as string,",
-				"          Purchase_Amount as integer,",
-				"          Date_inserted as date,",
-				"          Date_Updated as date",
-				"     ),",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:true,",
-				"     upsertable:true,",
-				"     keys:['Cust_ID'],",
-				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError',",
-				"     mapColumn(",
-				"          Cust_ID,",
-				"          Customer_Name,",
-				"          Customer_location,",
-				"          Purchase_Amount",
-				"     )) ~> sink1Insert",
+				"customerSource, CustomerDim lookup(customerSource@Cust_ID == CustomerDim@Cust_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1Source",
 				"alterRow1Update sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
