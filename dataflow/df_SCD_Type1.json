@@ -38,7 +38,7 @@
 			],
 			"transformations": [
 				{
-					"name": "exists1"
+					"name": "existsNO"
 				},
 				{
 					"name": "alterRowUpdate"
@@ -71,10 +71,10 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> CustomerDim",
 				"customerSource, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
-				"     negate:false,",
-				"     broadcast: 'auto')~> exists1",
-				"exists1 alterRow(updateIf(true())) ~> alterRowUpdate",
-				"exists1 alterRow(insertIf(true())) ~> alterRowInsert",
+				"     negate:true,",
+				"     broadcast: 'auto')~> existsNO",
+				"existsNO alterRow(updateIf(true())) ~> alterRowUpdate",
+				"existsNO alterRow(insertIf(true())) ~> alterRowInsert",
 				"alterRowInsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
