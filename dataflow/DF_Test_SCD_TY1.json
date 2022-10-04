@@ -30,7 +30,10 @@
 			],
 			"transformations": [
 				{
-					"name": "exists1"
+					"name": "existsInsert"
+				},
+				{
+					"name": "existsUpdate"
 				},
 				{
 					"name": "alterRow1"
@@ -61,9 +64,12 @@
 				"     format: 'table') ~> source2",
 				"source1, source2 exists(source1@Cust_ID == source2@Cust_ID,",
 				"     negate:true,",
-				"     broadcast: 'auto')~> exists1",
-				"exists1 alterRow(insertIf(true())) ~> alterRow1",
-				"alterRow1 sink(allowSchemaDrift: true,",
+				"     broadcast: 'auto')~> existsInsert",
+				"source2, source1 exists(source2@Cust_ID == source1@Cust_ID,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> existsUpdate",
+				"existsUpdate alterRow() ~> alterRow1",
+				"existsInsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Cust_ID as integer,",
