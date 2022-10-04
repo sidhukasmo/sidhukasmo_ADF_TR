@@ -1194,21 +1194,11 @@
 								"type": "DatasetReference"
 							},
 							"name": "sink1Insert"
-						},
-						{
-							"dataset": {
-								"referenceName": "DT_DimCustomer",
-								"type": "DatasetReference"
-							},
-							"name": "sink1Update"
 						}
 					],
 					"transformations": [
 						{
-							"name": "exists1"
-						},
-						{
-							"name": "alterRowUpdate"
+							"name": "existsNO"
 						},
 						{
 							"name": "alterRowInsert"
@@ -1238,10 +1228,9 @@
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> CustomerDim",
 						"customerSource, CustomerDim exists(customerSource@Cust_ID == CustomerDim@Cust_ID,",
-						"     negate:false,",
-						"     broadcast: 'auto')~> exists1",
-						"exists1 alterRow(updateIf(true())) ~> alterRowUpdate",
-						"exists1 alterRow(insertIf(true())) ~> alterRowInsert",
+						"     negate:true,",
+						"     broadcast: 'auto')~> existsNO",
+						"existsNO alterRow(insertIf(true())) ~> alterRowInsert",
 						"alterRowInsert sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -1266,32 +1255,7 @@
 						"          Customer_Name,",
 						"          Customer_location,",
 						"          Purchase_Amount",
-						"     )) ~> sink1Insert",
-						"alterRowUpdate sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Cust_ID as integer,",
-						"          Customer_Name as string,",
-						"          Customer_location as string,",
-						"          Purchase_Amount as integer,",
-						"          Date_inserted as date,",
-						"          Date_Updated as date",
-						"     ),",
-						"     deletable:false,",
-						"     insertable:false,",
-						"     updateable:false,",
-						"     upsertable:true,",
-						"     keys:['Cust_ID'],",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError',",
-						"     mapColumn(",
-						"          Cust_ID,",
-						"          Customer_Name,",
-						"          Customer_location,",
-						"          Purchase_Amount",
-						"     )) ~> sink1Update"
+						"     )) ~> sink1Insert"
 					]
 				}
 			},
@@ -1414,8 +1378,7 @@
 								"datasetParameters": {
 									"customerSource": {},
 									"CustomerDim": {},
-									"sink1Insert": {},
-									"sink1Update": {}
+									"sink1Insert": {}
 								}
 							},
 							"staging": {},
