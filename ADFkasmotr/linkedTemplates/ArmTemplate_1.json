@@ -13,6 +13,123 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/test_foreach')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT table_name, table_schema\nFROM information_schema.tables\nWHERE table_type = 'BASE TABLE'\nORDER BY table_name ASC;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup1').output",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureSqlTable1",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "CSVinput",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DF_Agr_split')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -220,6 +337,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "sink1Insert"
+						},
+						{
+							"dataset": {
+								"referenceName": "DT_DimCustomer",
+								"type": "DatasetReference"
+							},
+							"name": "sink1Update"
 						}
 					],
 					"transformations": [
@@ -228,6 +352,9 @@
 						},
 						{
 							"name": "alterRowInsert"
+						},
+						{
+							"name": "alterRow1Update"
 						}
 					],
 					"scriptLines": [
@@ -257,6 +384,7 @@
 						"     negate:true,",
 						"     broadcast: 'auto')~> existsNO",
 						"existsNO alterRow(insertIf(true())) ~> alterRowInsert",
+						"existsNO alterRow(updateIf(false())) ~> alterRow1Update",
 						"alterRowInsert sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -281,7 +409,32 @@
 						"          Customer_Name,",
 						"          Customer_location,",
 						"          Purchase_Amount",
-						"     )) ~> sink1Insert"
+						"     )) ~> sink1Insert",
+						"alterRow1Update sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Cust_ID as integer,",
+						"          Customer_Name as string,",
+						"          Customer_location as string,",
+						"          Purchase_Amount as integer,",
+						"          Date_inserted as date,",
+						"          Date_Updated as date",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:true,",
+						"     upsertable:false,",
+						"     keys:['Cust_ID'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          Cust_ID,",
+						"          Customer_Name,",
+						"          Customer_location,",
+						"          Purchase_Amount",
+						"     )) ~> sink1Update"
 					]
 				}
 			},
@@ -412,7 +565,8 @@
 								"datasetParameters": {
 									"customerSource": {},
 									"CustomerDim": {},
-									"sink1Insert": {}
+									"sink1Insert": {},
+									"sink1Update": {}
 								}
 							},
 							"staging": {},
