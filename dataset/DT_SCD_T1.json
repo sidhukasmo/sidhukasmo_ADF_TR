@@ -1,0 +1,35 @@
+{
+	"name": "DT_SCD_T1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LK_AzureSqlDatabase1_output",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Cust_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Customer_Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Customer_location",
+				"type": "varchar"
+			},
+			{
+				"name": "Purchase_Amount",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Customer"
+		}
+	}
+}

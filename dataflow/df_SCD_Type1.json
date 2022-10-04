@@ -1,0 +1,59 @@
+{
+	"name": "df_SCD_Type1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DT_SCD_T1",
+						"type": "DatasetReference"
+					},
+					"name": "customerSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCustomer",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerDim",
+					"description": "Add Ref dataset"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "lookupDimCustomer"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Cust_ID as integer,",
+				"          Customer_Name as string,",
+				"          Customer_location as string,",
+				"          Purchase_Amount as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> customerSource",
+				"source(output(",
+				"          Cust_ID as integer,",
+				"          Customer_Name as string,",
+				"          Customer_location as string,",
+				"          Purchase_Amount as integer,",
+				"          Date_inserted as date,",
+				"          Date_Updated as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> CustomerDim",
+				"customerSource lookup(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookupDimCustomer"
+			]
+		}
+	}
+}
