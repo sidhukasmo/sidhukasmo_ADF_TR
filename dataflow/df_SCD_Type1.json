@@ -26,6 +26,9 @@
 				},
 				{
 					"name": "exists1"
+				},
+				{
+					"name": "lookup1"
 				}
 			],
 			"scriptLines": [
@@ -67,7 +70,11 @@
 				"Customersource1 derive(Cust_Hash_Source = sha2(256,  iifNull(Title, '') + iifNull(FirstName, '') + iifNull(MiddleName, '') + iifNull(LastName, '') + iifNull(Suffix, '') + iifNull(CompanyName, '') + iifNull(SalesPerson, ''))) ~> DCSourceHash",
 				"DCSourceHash, CustomerSink exists(Cust_Hash_Source == HashKey,",
 				"     negate:true,",
-				"     broadcast: 'auto')~> exists1"
+				"     broadcast: 'auto')~> exists1",
+				"exists1, CustomerSink lookup(Customersource1@CustomerID == CustomerSink@CustomerID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1"
 			]
 		}
 	}
