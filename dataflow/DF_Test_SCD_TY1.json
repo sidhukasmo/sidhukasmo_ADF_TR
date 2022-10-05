@@ -27,6 +27,9 @@
 				},
 				{
 					"name": "lookup1"
+				},
+				{
+					"name": "exists1"
 				}
 			],
 			"scriptLines": [
@@ -56,7 +59,10 @@
 				"derivedColumnHash, Refarance lookup(source1@Cust_ID == Refarance@Cust_ID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup1"
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1, Refarance exists(source1@Cust_ID == Refarance@Cust_ID,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> exists1"
 			]
 		}
 	}
