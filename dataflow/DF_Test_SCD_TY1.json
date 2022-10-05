@@ -48,7 +48,7 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> Refarance",
-				"source1 derive(hashkey = sha2(256, iifNull(Cust_ID, '') + iifNull(Customer_Name, '') + iifNull(Customer_location, '') )) ~> derivedColumnHash"
+				"source1 derive(CustSorce_SH = sha2(256, iifNull(Cust_ID, ''))) ~> derivedColumnHash"
 			]
 		}
 	}
