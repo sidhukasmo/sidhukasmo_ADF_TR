@@ -20,7 +20,11 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "derivedColumnHash"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          Cust_ID as integer,",
@@ -43,7 +47,8 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> Refarance"
+				"     format: 'table') ~> Refarance",
+				"source1 derive(hashkey = sha2(256, iifNull(Cust_ID, '') + iifNull(Customer_Name, '') + iifNull(Customer_location, '') )) ~> derivedColumnHash"
 			]
 		}
 	}
