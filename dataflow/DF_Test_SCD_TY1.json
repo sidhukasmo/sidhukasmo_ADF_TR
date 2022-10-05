@@ -43,7 +43,7 @@
 					"name": "alterRow1"
 				},
 				{
-					"name": "DateForSink"
+					"name": "SinkDates1"
 				}
 			],
 			"scriptLines": [
@@ -77,10 +77,10 @@
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> lookup1",
-				"lookup1 alterRow(upsertIf(true())) ~> alterRow1",
-				"alterRow1 derive(Date_inserted = iifNull(Date_inserted, currentTimestamp()),",
-				"          Date_Updated = iifNull(Date_Updated, currentTimestamp())) ~> DateForSink",
-				"DateForSink sink(allowSchemaDrift: true,",
+				"SinkDates1 alterRow(upsertIf(true())) ~> alterRow1",
+				"lookup1 derive(Date_inserted = iifNull(Date_inserted, currentTimestamp()),",
+				"          Date_Updated = iifNull(Date_Updated, currentTimestamp())) ~> SinkDates1",
+				"alterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          Cust_ID as integer,",
