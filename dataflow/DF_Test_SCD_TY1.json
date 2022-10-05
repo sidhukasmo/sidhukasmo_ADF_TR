@@ -19,7 +19,15 @@
 					"name": "Refarance"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DT_DimCustomer",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "derivedColumnHash",
@@ -30,6 +38,12 @@
 				},
 				{
 					"name": "lookup1"
+				},
+				{
+					"name": "alterRow1"
+				},
+				{
+					"name": "DateForSink"
 				}
 			],
 			"scriptLines": [
@@ -62,7 +76,36 @@
 				"exists1, Refarance lookup(source1@Cust_ID == Refarance@Cust_ID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup1"
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 alterRow(upsertIf(true())) ~> alterRow1",
+				"alterRow1 derive(Date_inserted = iifNull(Date_inserted, currentTimestamp()),",
+				"          Date_Updated = iifNull(Date_Updated, currentTimestamp())) ~> DateForSink",
+				"DateForSink sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Cust_ID as integer,",
+				"          Customer_Name as string,",
+				"          Customer_location as string,",
+				"          Purchase_Amount as integer,",
+				"          Date_inserted as date,",
+				"          Date_Updated as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          Cust_ID = source1@Cust_ID,",
+				"          Customer_Name = source1@Customer_Name,",
+				"          Customer_location = source1@Customer_location,",
+				"          Purchase_Amount = source1@Purchase_Amount,",
+				"          Date_inserted,",
+				"          Date_Updated",
+				"     )) ~> sink1"
 			]
 		}
 	}
