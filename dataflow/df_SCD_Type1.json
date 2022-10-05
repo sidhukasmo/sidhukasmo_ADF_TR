@@ -22,7 +22,8 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "DCSourceHash"
+					"name": "DCSourceHash",
+					"description": "sha2(256,  iifNull(Title, '') + iifNull(FirstName, '') + iifNull(MiddleName, '') + iifNull(LastName, '') + iifNull(Suffix, '') + iifNull(CompanyName, '') + iifNull(SalesPerson, ''))"
 				},
 				{
 					"name": "exists1"
