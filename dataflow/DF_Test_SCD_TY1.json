@@ -22,7 +22,8 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "derivedColumnHash"
+					"name": "derivedColumnHash",
+					"description": "sha2(256,  iifNull(Customer_Name, '') + iifNull(Customer_location, '') + iifNull(toString(Purchase_Amount),'') )"
 				}
 			],
 			"scriptLines": [
@@ -48,7 +49,7 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> Refarance",
-				"source1 derive(CustSorce_SH = sha2(256, iifNull(Cust_ID, ''))) ~> derivedColumnHash"
+				"source1 derive(CustSorce_SH = sha2(256,  iifNull(Customer_Name, '') + iifNull(Customer_location, '') + iifNull(toString(Purchase_Amount),'') )) ~> derivedColumnHash"
 			]
 		}
 	}
