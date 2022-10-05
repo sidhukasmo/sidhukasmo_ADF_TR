@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "lookup1"
+				},
+				{
+					"name": "DCSinkDates"
 				}
 			],
 			"scriptLines": [
@@ -75,7 +78,9 @@
 				"exists1, CustomerSink lookup(Customersource1@CustomerID == CustomerSink@CustomerID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup1"
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 derive(InsertedDate = iifNull(InsertedDate, currentTimestamp(),InsertedDate),",
+				"          ModifiedDate = currentTimestamp()) ~> DCSinkDates"
 			]
 		}
 	}
