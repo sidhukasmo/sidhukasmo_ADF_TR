@@ -1,5 +1,5 @@
 {
-	"name": "DT_CustomerSource",
+	"name": "DT_Customer_Source",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LK_AzureSqlDatabase1_output",
