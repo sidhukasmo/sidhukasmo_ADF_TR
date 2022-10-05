@@ -19,7 +19,15 @@
 					"name": "CustomerSink"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DT_CustomerSink",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "DCSourceHash",
@@ -33,6 +41,9 @@
 				},
 				{
 					"name": "DCSinkDates"
+				},
+				{
+					"name": "alterRow1"
 				}
 			],
 			"scriptLines": [
@@ -80,7 +91,49 @@
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> lookup1",
 				"lookup1 derive(InsertedDate = iifNull(InsertedDate, currentTimestamp(),InsertedDate),",
-				"          ModifiedDate = currentTimestamp()) ~> DCSinkDates"
+				"          ModifiedDate = currentTimestamp()) ~> DCSinkDates",
+				"DCSinkDates alterRow(upsertIf(true())) ~> alterRow1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CustomerID as integer,",
+				"          Title as string,",
+				"          FirstName as string,",
+				"          MiddleName as string,",
+				"          LastName as string,",
+				"          Suffix as string,",
+				"          CompanyName as string,",
+				"          SalesPerson as string,",
+				"          EmailAddress as string,",
+				"          Phone as string,",
+				"          InsertedDate as timestamp,",
+				"          ModifiedDate as timestamp,",
+				"          HashKey as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:['CustomerID'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          CustomerID = Customersource1@CustomerID,",
+				"          Title = Customersource1@Title,",
+				"          FirstName = Customersource1@FirstName,",
+				"          MiddleName = Customersource1@MiddleName,",
+				"          LastName = Customersource1@LastName,",
+				"          Suffix = Customersource1@Suffix,",
+				"          CompanyName = Customersource1@CompanyName,",
+				"          SalesPerson = Customersource1@SalesPerson,",
+				"          EmailAddress = Customersource1@EmailAddress,",
+				"          Phone = Customersource1@Phone,",
+				"          InsertedDate,",
+				"          ModifiedDate,",
+				"          HashKey",
+				"     )) ~> sink1"
 			]
 		}
 	}
