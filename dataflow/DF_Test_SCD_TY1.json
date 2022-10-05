@@ -24,6 +24,9 @@
 				{
 					"name": "derivedColumnHash",
 					"description": "sha2(256,  iifNull(Customer_Name, '') + iifNull(Customer_location, '') + iifNull(toString(Purchase_Amount),'') )"
+				},
+				{
+					"name": "lookup1"
 				}
 			],
 			"scriptLines": [
@@ -49,7 +52,11 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> Refarance",
-				"source1 derive(CustSorce_SH = sha2(256,  iifNull(Customer_Name, '') + iifNull(Customer_location, '') + iifNull(toString(Purchase_Amount),'') )) ~> derivedColumnHash"
+				"source1 derive(CustSorce_SH = sha2(256,  iifNull(Customer_Name, '') + iifNull(Customer_location, '') + iifNull(toString(Purchase_Amount),'') )) ~> derivedColumnHash",
+				"derivedColumnHash, Refarance lookup(source1@Cust_ID == Refarance@Cust_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1"
 			]
 		}
 	}
