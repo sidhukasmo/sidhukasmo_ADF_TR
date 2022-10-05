@@ -10,10 +10,24 @@
 						"type": "DatasetReference"
 					},
 					"name": "Customersource1"
+				},
+				{
+					"dataset": {
+						"referenceName": "DT_CustomerSink",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerSink"
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "DCSourceHash"
+				},
+				{
+					"name": "exists1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          CustomerID as integer,",
@@ -30,7 +44,30 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> Customersource1"
+				"     format: 'table') ~> Customersource1",
+				"source(output(",
+				"          CustomerID as integer,",
+				"          Title as string,",
+				"          FirstName as string,",
+				"          MiddleName as string,",
+				"          LastName as string,",
+				"          Suffix as string,",
+				"          CompanyName as string,",
+				"          SalesPerson as string,",
+				"          EmailAddress as string,",
+				"          Phone as string,",
+				"          InsertedDate as timestamp,",
+				"          ModifiedDate as timestamp,",
+				"          HashKey as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> CustomerSink",
+				"Customersource1 derive(Cust_Hash_Source = sha2(256,  iifNull(Title, '') + iifNull(FirstName, '') + iifNull(MiddleName, '') + iifNull(LastName, '') + iifNull(Suffix, '') + iifNull(CompanyName, '') + iifNull(SalesPerson, ''))) ~> DCSourceHash",
+				"DCSourceHash, CustomerSink exists(Cust_Hash_Source == HashKey,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> exists1"
 			]
 		}
 	}
