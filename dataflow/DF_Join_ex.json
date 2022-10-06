@@ -55,7 +55,7 @@
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source2",
-				"source1 derive(title_trim1 = trim($title_trim)) ~> derivedColumn1",
+				"source1 derive({} = ERROR_FUNCTION('')) ~> derivedColumn1",
 				"source2 derive(title_trim2 = trim($title_trim)) ~> derivedColumn2",
 				"derivedColumn1, derivedColumn2 join(title_trim1 == title_trim2,",
 				"     joinType:'inner',",
