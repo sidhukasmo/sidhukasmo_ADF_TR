@@ -34,13 +34,13 @@
 			],
 			"transformations": [
 				{
-					"name": "derivedColumn1"
-				},
-				{
 					"name": "derivedColumn2"
 				},
 				{
 					"name": "joininner1"
+				},
+				{
+					"name": "DCSource1"
 				}
 			],
 			"scriptLines": [
@@ -54,13 +54,13 @@
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source2",
-				"source1 derive({} = ERROR_FUNCTION('')) ~> derivedColumn1",
 				"source2 derive(title_trim2 = trim($title_trim)) ~> derivedColumn2",
-				"derivedColumn1, derivedColumn2 join(title_trim1 == title_trim2,",
+				"DCSource1, derivedColumn2 join(title_trim1 == title_trim2,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joininner1",
+				"source1 derive(column1 = $title_trim) ~> DCSource1",
 				"joininner1 sink(allowSchemaDrift: true,",
 				"     validateSchema: true,",
 				"     partitionFileNames:['moviesjoinOPT'],",
