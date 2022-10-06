@@ -53,7 +53,7 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joininner1",
-				"source1 derive(title_new = ERROR_FUNCTION('')) ~> derivedColumn1",
+				"source1 derive(title_new = trim(title)) ~> derivedColumn1",
 				"joininner1 sink(allowSchemaDrift: true,",
 				"     validateSchema: true,",
 				"     partitionFileNames:['moviesjoinOPT2'],",
