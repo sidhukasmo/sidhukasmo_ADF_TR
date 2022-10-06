@@ -13,7 +13,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "testout",
+						"referenceName": "CSVoutput",
 						"type": "DatasetReference"
 					},
 					"name": "source2"
@@ -57,15 +57,7 @@
 				"     limit: 100,",
 				"     ignoreNoFilesFound: false,",
 				"     rowUrlColumn: 'New_cars1') ~> source1",
-				"source(output(",
-				"          movie as string,",
-				"          title as string,",
-				"          genres as string,",
-				"          year as string,",
-				"          Rating as string,",
-				"          RottenTomato as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
+				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source2",
 				"source1 derive(trim_title1 = trim(title)) ~> derivedColumn1",
