@@ -1,5 +1,5 @@
 {
-	"name": "testin",
+	"name": "MoviesDB_Input",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LK_ABS_Input",
@@ -10,8 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "testin",
-				"container": "testin"
+				"fileName": "moviesDB.csv",
+				"container": "input"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
