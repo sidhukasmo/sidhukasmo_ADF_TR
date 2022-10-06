@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "CSVinput",
+						"referenceName": "movies_Input",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -47,12 +47,7 @@
 				"parameters{",
 				"     title_trim as string (trim(title))",
 				"}",
-				"source(output(",
-				"          movieId as string,",
-				"          title as string,",
-				"          genres as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
+				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     limit: 100,",
 				"     ignoreNoFilesFound: false,",
