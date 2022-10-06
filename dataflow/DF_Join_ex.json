@@ -60,7 +60,7 @@
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source2",
-				"source1 derive(trim_title1 = trim(title)) ~> derivedColumn1",
+				"source1 derive(title = toString(left(title,length(title)-6))) ~> derivedColumn1",
 				"source2 derive(title_trim2 = trim(title)) ~> derivedColumn2",
 				"derivedColumn1, derivedColumn2 join(source1@title == source2@title,",
 				"     joinType:'inner',",
