@@ -224,14 +224,14 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CSVinput",
+								"referenceName": "movies_Input",
 								"type": "DatasetReference"
 							},
 							"name": "source1"
 						},
 						{
 							"dataset": {
-								"referenceName": "testout",
+								"referenceName": "MoviesDB_Input",
 								"type": "DatasetReference"
 							},
 							"name": "source2"
@@ -252,19 +252,13 @@
 					],
 					"transformations": [
 						{
-							"name": "derivedColumn1"
-						},
-						{
-							"name": "derivedColumn2"
-						},
-						{
 							"name": "joininner1"
+						},
+						{
+							"name": "derivedColumn1"
 						}
 					],
 					"scriptLines": [
-						"parameters{",
-						"     title_trim as string (trim(title))",
-						"}",
 						"source(output(",
 						"          movieId as string,",
 						"          title as string,",
@@ -273,8 +267,7 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     limit: 100,",
-						"     ignoreNoFilesFound: false,",
-						"     rowUrlColumn: 'New_cars1') ~> source1",
+						"     ignoreNoFilesFound: false) ~> source1",
 						"source(output(",
 						"          movie as string,",
 						"          title as string,",
@@ -286,16 +279,15 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> source2",
-						"source1 derive(trim_title1 = trim(title)) ~> derivedColumn1",
-						"source2 derive(title_trim2 = trim(title)) ~> derivedColumn2",
-						"derivedColumn1, derivedColumn2 join(source1@title == source2@title,",
-						"     joinType:'inner',",
+						"derivedColumn1, source2 join(title_new == source2@title,",
+						"     joinType:'left',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> joininner1",
+						"source1 derive(title_new = title) ~> derivedColumn1",
 						"joininner1 sink(allowSchemaDrift: true,",
 						"     validateSchema: true,",
-						"     partitionFileNames:['moviesjoinOPT'],",
+						"     partitionFileNames:['moviesjoinOPT2'],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     quoteAll: true,",
@@ -586,9 +578,7 @@
 							"dataflow": {
 								"referenceName": "DF_Join_ex",
 								"type": "DataFlowReference",
-								"parameters": {
-									"title_trim": "trim(title)"
-								},
+								"parameters": {},
 								"datasetParameters": {
 									"source1": {},
 									"source2": {},

@@ -118,9 +118,7 @@
 							"dataflow": {
 								"referenceName": "DF_Join_ex",
 								"type": "DataFlowReference",
-								"parameters": {
-									"title_trim": "trim(title)"
-								},
+								"parameters": {},
 								"datasetParameters": {
 									"source1": {},
 									"source2": {},
@@ -379,64 +377,13 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Event_TR_Copydata",
-						"type": "Copy",
+						"name": "Wait1",
+						"type": "Wait",
 						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
 						"userProperties": [],
 						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "testin",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "testout",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+							"waitTimeInSeconds": 1
+						}
 					}
 				],
 				"policy": {
@@ -450,10 +397,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/testin')]",
-				"[concat(variables('factoryId'), '/datasets/testout')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TestTumblingTR')]",
@@ -1028,6 +972,59 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/MoviesDB_Input')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_ABS_Input",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "moviesDB.csv",
+						"container": "input"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "movie",
+						"type": "String"
+					},
+					{
+						"name": "title",
+						"type": "String"
+					},
+					{
+						"name": "genres",
+						"type": "String"
+					},
+					{
+						"name": "year",
+						"type": "String"
+					},
+					{
+						"name": "Rating",
+						"type": "String"
+					},
+					{
+						"name": "RottenTomato",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SqlTableGenarate')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1081,7 +1078,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TestBlob')]",
+			"name": "[concat(parameters('factoryName'), '/movies_Input')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1094,41 +1091,28 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "movies.csv",
 						"container": "input"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/testin')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_ABS_Input",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "testin",
-						"container": "testin"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": []
+				"schema": [
+					{
+						"name": "movieId",
+						"type": "String"
+					},
+					{
+						"name": "title",
+						"type": "String"
+					},
+					{
+						"name": "genres",
+						"type": "String"
+					}
+				]
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
@@ -1325,14 +1309,14 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "CSVinput",
+								"referenceName": "movies_Input",
 								"type": "DatasetReference"
 							},
 							"name": "source1"
 						},
 						{
 							"dataset": {
-								"referenceName": "testout",
+								"referenceName": "MoviesDB_Input",
 								"type": "DatasetReference"
 							},
 							"name": "source2"
@@ -1353,19 +1337,13 @@
 					],
 					"transformations": [
 						{
-							"name": "derivedColumn1"
-						},
-						{
-							"name": "derivedColumn2"
-						},
-						{
 							"name": "joininner1"
+						},
+						{
+							"name": "derivedColumn1"
 						}
 					],
 					"scriptLines": [
-						"parameters{",
-						"     title_trim as string (trim(title))",
-						"}",
 						"source(output(",
 						"          movieId as string,",
 						"          title as string,",
@@ -1374,8 +1352,7 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     limit: 100,",
-						"     ignoreNoFilesFound: false,",
-						"     rowUrlColumn: 'New_cars1') ~> source1",
+						"     ignoreNoFilesFound: false) ~> source1",
 						"source(output(",
 						"          movie as string,",
 						"          title as string,",
@@ -1387,16 +1364,15 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> source2",
-						"source1 derive(trim_title1 = trim(title)) ~> derivedColumn1",
-						"source2 derive(title_trim2 = trim(title)) ~> derivedColumn2",
-						"derivedColumn1, derivedColumn2 join(source1@title == source2@title,",
-						"     joinType:'inner',",
+						"derivedColumn1, source2 join(title_new == source2@title,",
+						"     joinType:'left',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
 						"     broadcast: 'auto')~> joininner1",
+						"source1 derive(title_new = title) ~> derivedColumn1",
 						"joininner1 sink(allowSchemaDrift: true,",
 						"     validateSchema: true,",
-						"     partitionFileNames:['moviesjoinOPT'],",
+						"     partitionFileNames:['moviesjoinOPT2'],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     quoteAll: true,",
@@ -1405,8 +1381,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CSVinput')]",
-				"[concat(variables('factoryId'), '/datasets/testout')]",
+				"[concat(variables('factoryId'), '/datasets/movies_Input')]",
+				"[concat(variables('factoryId'), '/datasets/MoviesDB_Input')]",
 				"[concat(variables('factoryId'), '/datasets/CSVoutput')]",
 				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
 			]
