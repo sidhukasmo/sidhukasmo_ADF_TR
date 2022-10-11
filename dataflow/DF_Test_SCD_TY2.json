@@ -26,13 +26,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "NewRecords"
-				},
-				{
-					"dataset": {
-						"referenceName": "DS_Emp_SCD2",
-						"type": "DatasetReference"
-					},
-					"name": "sinkUpdate"
 				}
 			],
 			"transformations": [
@@ -46,13 +39,7 @@
 					"name": "InsertNewRow"
 				},
 				{
-					"name": "existsthen"
-				},
-				{
-					"name": "UpdateActiveandEnddate"
-				},
-				{
-					"name": "UpdateRow"
+					"name": "hastUD"
 				}
 			],
 			"scriptLines": [
@@ -84,12 +71,7 @@
 				"          StartDate = currentDate(),",
 				"          EndDate = toDate('9999-12-31', 'yyyy-mm-dd')) ~> ActiveAndDates",
 				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
-				"empCsv, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
-				"     negate:false,",
-				"     broadcast: 'auto')~> existsthen",
-				"existsthen derive(isactive = 0,",
-				"          enddate = currentDate()) ~> UpdateActiveandEnddate",
-				"UpdateActiveandEnddate alterRow(updateIf(true())) ~> UpdateRow",
+				"EmpSqlSCD2 derive({md5(ID+Name+Department)} = md5(emp_id+ toInteger(emp_name) + toInteger(dept))) ~> hastUD",
 				"InsertNewRow sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -115,34 +97,7 @@
 				"          isactive,",
 				"          startdate = StartDate,",
 				"          enddate = EndDate",
-				"     )) ~> NewRecords",
-				"UpdateRow sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          emp_id as integer,",
-				"          emp_name as string,",
-				"          dept as string,",
-				"          isactive as integer,",
-				"          startdate as date,",
-				"          enddate as date",
-				"     ),",
-				"     deletable:false,",
-				"     insertable:false,",
-				"     updateable:true,",
-				"     upsertable:false,",
-				"     keys:[(EmpRecID)],",
-				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError',",
-				"     mapColumn(",
-				"          emp_id = ID,",
-				"          emp_name = Name,",
-				"          dept = Department,",
-				"          isactive,",
-				"          startdate = StartDate,",
-				"          enddate",
-				"     )) ~> sinkUpdate"
+				"     )) ~> NewRecords"
 			]
 		}
 	}
