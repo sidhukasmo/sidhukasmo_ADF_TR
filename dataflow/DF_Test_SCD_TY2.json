@@ -90,7 +90,7 @@
 				"          StartDate = currentDate(),",
 				"          EndDate = toDate('9999-12-31', 'yyyy-mm-dd')) ~> ActiveAndDates",
 				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
-				"EmpSqlSCD2 derive(HashSql = sha2(256,emp_id+ toInteger(emp_name) + toInteger(dept)) ) ~> hastSql",
+				"EmpSqlSCD2 derive(HashSql = sha2(256,  iifNull(emp_name, '') + iifNull(dept, ''))) ~> hastSql",
 				"hastSql, Hashcsv exists(HashSql == hashcsv,",
 				"     negate:false,",
 				"     broadcast: 'auto')~> exists1",
