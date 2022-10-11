@@ -66,7 +66,7 @@
 				"     broadcast: 'auto')~> Notexists",
 				"Notexists derive(isactive = 1,",
 				"          StartDate = currentDate(),",
-				"          EndDate = toDate('9999-12-31', 'yyyy-MM-dd')) ~> ActiveAndDates",
+				"          EndDate = toDate('9999-12-31', 'yyyy-mm-dd')) ~> ActiveAndDates",
 				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
 				"InsertNewRow sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
