@@ -40,6 +40,12 @@
 				},
 				{
 					"name": "existsthen"
+				},
+				{
+					"name": "UpdateActiveandEnddate"
+				},
+				{
+					"name": "UpdateRow"
 				}
 			],
 			"scriptLines": [
@@ -74,6 +80,9 @@
 				"empCsv, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
 				"     negate:false,",
 				"     broadcast: 'auto')~> existsthen",
+				"existsthen derive(isactive = 0,",
+				"          enddate = currentDate()) ~> UpdateActiveandEnddate",
+				"UpdateActiveandEnddate alterRow(updateIf(true())) ~> UpdateRow",
 				"InsertNewRow sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
