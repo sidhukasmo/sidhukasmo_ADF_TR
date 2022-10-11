@@ -13,6 +13,200 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/PL_Copydata')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data Ex",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "CSVinput",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_TablesBulkCopy_Foreach')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Copy multiple tables in bulk with Lookup and For Each",
+				"activities": [
+					{
+						"name": "Lkmultipletabs",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select * from [dbo].[ExportedTables]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEachBullkCopy",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lkmultipletabs",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lkmultipletabs').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "ExportToCSV",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".CSV"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "SqlTableGenarate",
+											"type": "DatasetReference",
+											"parameters": {
+												"Tablename": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												},
+												"SchemaName": {
+													"value": "@item().TABLE_SCHEMA",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "GenaricCSV_Output",
+											"type": "DatasetReference",
+											"parameters": {
+												"filename": {
+													"value": "@concat(item().Table_Schema,'_',item().Table_Name,'.CSV')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/test_foreach')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -298,7 +492,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DF_Test_SCD_TY1')]",
+			"name": "[concat(parameters('factoryName'), '/DF_Test_SCD_TY2')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -307,107 +501,94 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "DT_Customer_Source",
+								"referenceName": "DS_Emp_Csv",
 								"type": "DatasetReference"
 							},
-							"name": "source1"
+							"name": "empCsv"
 						},
 						{
 							"dataset": {
-								"referenceName": "DT_DimCustomer",
+								"referenceName": "DS_Emp_SCD2",
 								"type": "DatasetReference"
 							},
-							"name": "Refarance"
+							"name": "EmpSqlSCD2"
 						}
 					],
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "DT_DimCustomer",
+								"referenceName": "DS_Emp_SCD2",
 								"type": "DatasetReference"
 							},
-							"name": "sink1"
+							"name": "NewRecords"
 						}
 					],
 					"transformations": [
 						{
-							"name": "derivedColumnHash",
-							"description": "sha2(256,  iifNull(Customer_Name, '') + iifNull(Customer_location, '') + iifNull(toString(Purchase_Amount),'') )"
+							"name": "Notexists"
 						},
 						{
-							"name": "exists1"
+							"name": "ActiveAndDates"
 						},
 						{
-							"name": "lookup1"
-						},
-						{
-							"name": "alterRow1"
-						},
-						{
-							"name": "SinkDates1"
+							"name": "InsertNewRow"
 						}
 					],
 					"scriptLines": [
 						"source(output(",
-						"          Cust_ID as integer,",
-						"          Customer_Name as string,",
-						"          Customer_location as string,",
-						"          Purchase_Amount as integer",
+						"          ID as string,",
+						"          Name as string,",
+						"          Department as string,",
+						"          StartDate as string",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> source1",
+						"     ignoreNoFilesFound: false) ~> empCsv",
 						"source(output(",
-						"          Cust_ID as integer,",
-						"          Customer_Name as string,",
-						"          Customer_location as string,",
-						"          Purchase_Amount as integer,",
-						"          Date_inserted as date,",
-						"          Date_Updated as date",
+						"          emp_id as integer,",
+						"          emp_name as string,",
+						"          dept as string,",
+						"          isactive as integer,",
+						"          startdate as date,",
+						"          enddate as date",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> Refarance",
-						"source1 derive(CustSorce_SH = sha2(256,  iifNull(Customer_Name, '') + iifNull(Customer_location, '') + iifNull(toString(Purchase_Amount),'') )) ~> derivedColumnHash",
-						"derivedColumnHash, Refarance exists(source1@Cust_ID == Refarance@Cust_ID,",
+						"     format: 'table') ~> EmpSqlSCD2",
+						"empCsv, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
 						"     negate:true,",
-						"     broadcast: 'auto')~> exists1",
-						"exists1, Refarance lookup(source1@Cust_ID == Refarance@Cust_ID,",
-						"     multiple: false,",
-						"     pickup: 'any',",
-						"     broadcast: 'auto')~> lookup1",
-						"SinkDates1 alterRow(upsertIf(true())) ~> alterRow1",
-						"lookup1 derive(Date_inserted = iifNull(Date_inserted, currentTimestamp()),",
-						"          Date_Updated = iifNull(Date_Updated, currentTimestamp())) ~> SinkDates1",
-						"alterRow1 sink(allowSchemaDrift: true,",
+						"     broadcast: 'auto')~> Notexists",
+						"Notexists derive(isactive = 1,",
+						"          StartDate = currentTimestamp(),",
+						"          EndDate = toDate('9999-12-31', 'yyyy-MM-dd')) ~> ActiveAndDates",
+						"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
+						"InsertNewRow sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
-						"          Cust_ID as integer,",
-						"          Customer_Name as string,",
-						"          Customer_location as string,",
-						"          Purchase_Amount as integer,",
-						"          Date_inserted as date,",
-						"          Date_Updated as date",
+						"          emp_id as integer,",
+						"          emp_name as string,",
+						"          dept as string,",
+						"          isactive as integer,",
+						"          startdate as date,",
+						"          enddate as date",
 						"     ),",
 						"     deletable:false,",
-						"     insertable:false,",
+						"     insertable:true,",
 						"     updateable:false,",
-						"     upsertable:true,",
-						"     keys:['Cust_ID'],",
+						"     upsertable:false,",
 						"     format: 'table',",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     errorHandlingOption: 'stopOnFirstError',",
 						"     mapColumn(",
-						"          Cust_ID = source1@Cust_ID,",
-						"          Customer_Name = source1@Customer_Name,",
-						"          Customer_location = source1@Customer_location,",
-						"          Purchase_Amount = source1@Purchase_Amount,",
-						"          Date_inserted,",
-						"          Date_Updated",
-						"     )) ~> sink1"
+						"          emp_id = ID,",
+						"          emp_name = Name,",
+						"          dept = Department,",
+						"          isactive,",
+						"          startdate = StartDate,",
+						"          enddate = EndDate",
+						"     )) ~> NewRecords"
 					]
 				}
 			},
@@ -702,13 +883,13 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Test_SCD_TY1')]",
+			"name": "[concat(parameters('factoryName'), '/Test_SCD_TY2')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "DF_Test_SCD_TY1",
+						"name": "DF_Test_SCD_TY2",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -721,13 +902,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "DF_Test_SCD_TY1",
+								"referenceName": "DF_Test_SCD_TY2",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"source1": {},
-									"Refarance": {},
-									"sink1": {}
+									"empCsv": {},
+									"EmpSqlSCD2": {},
+									"NewRecords": {}
 								}
 							},
 							"staging": {},
@@ -746,7 +927,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DF_Test_SCD_TY1')]"
+				"[concat(variables('factoryId'), '/dataflows/DF_Test_SCD_TY2')]"
 			]
 		}
 	]
