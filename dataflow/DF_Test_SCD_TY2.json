@@ -37,6 +37,9 @@
 				},
 				{
 					"name": "InsertNewRow"
+				},
+				{
+					"name": "existsthen"
 				}
 			],
 			"scriptLines": [
@@ -68,6 +71,9 @@
 				"          StartDate = currentDate(),",
 				"          EndDate = toDate('9999-12-31', 'yyyy-mm-dd')) ~> ActiveAndDates",
 				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
+				"empCsv, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> existsthen",
 				"InsertNewRow sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
