@@ -94,7 +94,7 @@
 				"hastSql, Hashcsv exists(HashSql == hashcsv,",
 				"     negate:false,",
 				"     broadcast: 'auto')~> exists1",
-				"empCsv derive(hashcsv = sha2(256,(ID+Name+Department))) ~> Hashcsv",
+				"empCsv derive(hashcsv = sha2(256,  iifNull(Name, '') + iifNull(Department, ''))) ~> Hashcsv",
 				"exists1 derive(EndDate = currentDate(),",
 				"          isactive = 0) ~> updateActiveandEnddate",
 				"updateActiveandEnddate alterRow(updateIf(true())) ~> updaterow",
