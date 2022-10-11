@@ -26,6 +26,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "NewRecords"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_Emp_SCD2",
+						"type": "DatasetReference"
+					},
+					"name": "sinkUpdate"
 				}
 			],
 			"transformations": [
@@ -108,7 +115,33 @@
 				"          isactive,",
 				"          startdate = StartDate,",
 				"          enddate = EndDate",
-				"     )) ~> NewRecords"
+				"     )) ~> NewRecords",
+				"UpdateRow sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          emp_id as integer,",
+				"          emp_name as string,",
+				"          dept as string,",
+				"          isactive as integer,",
+				"          startdate as date,",
+				"          enddate as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          emp_id = ID,",
+				"          emp_name = Name,",
+				"          dept = Department,",
+				"          isactive,",
+				"          startdate = StartDate,",
+				"          enddate",
+				"     )) ~> sinkUpdate"
 			]
 		}
 	}
