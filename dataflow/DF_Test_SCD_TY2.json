@@ -1,5 +1,5 @@
 {
-	"name": "DF_Test_SCD_TY1",
+	"name": "DF_Test_SCD_TY2",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -23,6 +23,9 @@
 			"transformations": [
 				{
 					"name": "exists1"
+				},
+				{
+					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
@@ -49,7 +52,8 @@
 				"     format: 'table') ~> EmpSqlSCD2",
 				"empCsv, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
 				"     negate:true,",
-				"     broadcast: 'auto')~> exists1"
+				"     broadcast: 'auto')~> exists1",
+				"exists1 derive() ~> derivedColumn1"
 			]
 		}
 	}

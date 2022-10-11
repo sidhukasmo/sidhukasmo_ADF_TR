@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DF_Test_SCD_TY1",
+						"referenceName": "DF_Test_SCD_TY2",
 						"type": "DataFlowReference"
 					},
 					"compute": {
