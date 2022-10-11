@@ -30,13 +30,16 @@
 			],
 			"transformations": [
 				{
-					"name": "exists1"
+					"name": "Notexists"
 				},
 				{
 					"name": "ActiveAndDates"
 				},
 				{
 					"name": "InsertNewRow"
+				},
+				{
+					"name": "existsthen"
 				}
 			],
 			"scriptLines": [
@@ -61,13 +64,16 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> EmpSqlSCD2",
-				"empCsv, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
+				"existsthen, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
 				"     negate:true,",
-				"     broadcast: 'auto')~> exists1",
-				"exists1 derive(isactive = 1,",
+				"     broadcast: 'auto')~> Notexists",
+				"Notexists derive(isactive = 1,",
 				"          StartDate = currentTimestamp(),",
 				"          EndDate = toDate('9999-12-31', 'yyyy-MM-dd')) ~> ActiveAndDates",
 				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
+				"empCsv, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> existsthen",
 				"InsertNewRow sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
