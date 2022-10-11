@@ -1,0 +1,43 @@
+{
+	"name": "DS_Emp_SCD2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LK_AzureSqlDatabase1_output",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "emp_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "emp_name",
+				"type": "varchar"
+			},
+			{
+				"name": "dept",
+				"type": "varchar"
+			},
+			{
+				"name": "isactive",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "startdate",
+				"type": "date"
+			},
+			{
+				"name": "enddate",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "dim_emp"
+		}
+	}
+}

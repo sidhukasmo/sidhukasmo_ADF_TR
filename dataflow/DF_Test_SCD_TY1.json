@@ -10,6 +10,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "empCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_Emp_SCD2",
+						"type": "DatasetReference"
+					},
+					"name": "EmpSqlSCD2"
 				}
 			],
 			"sinks": [],
@@ -23,7 +30,19 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> empCsv"
+				"     ignoreNoFilesFound: false) ~> empCsv",
+				"source(output(",
+				"          emp_id as integer,",
+				"          emp_name as string,",
+				"          dept as string,",
+				"          isactive as integer,",
+				"          startdate as date,",
+				"          enddate as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> EmpSqlSCD2"
 			]
 		}
 	}
