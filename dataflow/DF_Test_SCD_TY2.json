@@ -92,7 +92,7 @@
 				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
 				"EmpSqlSCD2 derive(HashSql = sha2(256,  iifNull(emp_name, '') + iifNull(dept, ''))) ~> hastSql",
 				"hastSql, Hashcsv exists(HashSql == hashcsv,",
-				"     negate:false,",
+				"     negate:true,",
 				"     broadcast: 'auto')~> exists1",
 				"empCsv derive(hashcsv = sha2(256,  iifNull(Name, '') + iifNull(Department, ''))) ~> Hashcsv",
 				"exists1 derive(EndDate = currentDate(),",
