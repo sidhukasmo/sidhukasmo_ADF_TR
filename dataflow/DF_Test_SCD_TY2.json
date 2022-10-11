@@ -19,7 +19,15 @@
 					"name": "EmpSqlSCD2"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Emp_SCD2",
+						"type": "DatasetReference"
+					},
+					"name": "NewRecords"
+				}
+			],
 			"transformations": [
 				{
 					"name": "exists1"
@@ -59,7 +67,33 @@
 				"exists1 derive(isactive = 1,",
 				"          StartDate = currentTimestamp(),",
 				"          EndDate = toDate('9999-12-31', 'yyyy-MM-dd')) ~> ActiveAndDates",
-				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow"
+				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
+				"InsertNewRow sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          emp_id as integer,",
+				"          emp_name as string,",
+				"          dept as string,",
+				"          isactive as integer,",
+				"          startdate as date,",
+				"          enddate as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          emp_id = ID,",
+				"          emp_name = Name,",
+				"          dept = Department,",
+				"          isactive,",
+				"          startdate = StartDate,",
+				"          enddate = EndDate",
+				"     )) ~> NewRecords"
 			]
 		}
 	}
