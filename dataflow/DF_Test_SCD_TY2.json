@@ -84,7 +84,7 @@
 				"          EndDate = toDate('9999-12-31', 'yyyy-mm-dd')) ~> ActiveAndDates",
 				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
 				"EmpSqlSCD2 derive(HashSql = md5(emp_id+ toInteger(emp_name) + toInteger(dept))) ~> hastSql",
-				"hastSql exists(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"hastSql, empCsv exists(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
 				"     negate:false,",
 				"     broadcast: 'auto')~> exists1",
 				"empCsv derive(hashcsv = md5(ID+Name+Department)) ~> Hashcsv",
