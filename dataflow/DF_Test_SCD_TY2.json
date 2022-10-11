@@ -26,6 +26,9 @@
 				},
 				{
 					"name": "ActiveAndDates"
+				},
+				{
+					"name": "InsertNewRow"
 				}
 			],
 			"scriptLines": [
@@ -55,7 +58,8 @@
 				"     broadcast: 'auto')~> exists1",
 				"exists1 derive(isactive = 1,",
 				"          StartDate = currentTimestamp(),",
-				"          EndDate = toDate('9999-12-31', 'yyyy-MM-dd')) ~> ActiveAndDates"
+				"          EndDate = toDate('9999-12-31', 'yyyy-MM-dd')) ~> ActiveAndDates",
+				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow"
 			]
 		}
 	}
