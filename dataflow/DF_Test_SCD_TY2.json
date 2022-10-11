@@ -37,7 +37,7 @@
 			],
 			"transformations": [
 				{
-					"name": "Notexists"
+					"name": "NotexistsInsert"
 				},
 				{
 					"name": "ActiveAndDates"
@@ -49,7 +49,7 @@
 					"name": "hastSql"
 				},
 				{
-					"name": "exists1"
+					"name": "NOexistsUpdate"
 				},
 				{
 					"name": "Hashcsv"
@@ -85,17 +85,17 @@
 				"     format: 'table') ~> EmpSqlSCD2",
 				"Hashcsv, hastSql exists(hashcsv == HashSql,",
 				"     negate:true,",
-				"     broadcast: 'auto')~> Notexists",
-				"Notexists derive(isactive = 1,",
+				"     broadcast: 'auto')~> NotexistsInsert",
+				"NotexistsInsert derive(isactive = 1,",
 				"          StartDate = currentDate(),",
 				"          EndDate = toDate('9999-12-31', 'yyyy-mm-dd')) ~> ActiveAndDates",
 				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
 				"EmpSqlSCD2 derive(HashSql = sha2(256,  iifNull(emp_name, '') + iifNull(dept, ''))) ~> hastSql",
 				"hastSql, Hashcsv exists(HashSql == hashcsv,",
 				"     negate:true,",
-				"     broadcast: 'auto')~> exists1",
+				"     broadcast: 'auto')~> NOexistsUpdate",
 				"empCsv derive(hashcsv = sha2(256,  iifNull(Name, '') + iifNull(Department, ''))) ~> Hashcsv",
-				"exists1 derive(EndDate = currentDate(),",
+				"NOexistsUpdate derive(EndDate = currentDate(),",
 				"          isactive = 0) ~> updateActiveandEnddate",
 				"updateActiveandEnddate alterRow(updateIf(true())) ~> updaterow",
 				"InsertNewRow sink(allowSchemaDrift: true,",
