@@ -55,7 +55,7 @@
 				"     broadcast: 'auto')~> exists1",
 				"exists1 derive(isactive = 1,",
 				"          StartDate = currentTimestamp(),",
-				"          EndDate = toDate('999-12-31', 'yyyy-MM-dd')) ~> ActiveAndDates"
+				"          EndDate = toDate('9999-12-31', 'yyyy-MM-dd')) ~> ActiveAndDates"
 			]
 		}
 	}
