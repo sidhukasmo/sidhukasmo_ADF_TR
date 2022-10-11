@@ -53,6 +53,9 @@
 				},
 				{
 					"name": "UpdateRow"
+				},
+				{
+					"name": "surrogateKey1"
 				}
 			],
 			"scriptLines": [
@@ -90,6 +93,9 @@
 				"existsthen derive(isactive = 0,",
 				"          enddate = currentDate()) ~> UpdateActiveandEnddate",
 				"UpdateActiveandEnddate alterRow(updateIf(true())) ~> UpdateRow",
+				"UpdateRow keyGenerate(output(EmpRecID as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
 				"InsertNewRow sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -116,7 +122,7 @@
 				"          startdate = StartDate,",
 				"          enddate = EndDate",
 				"     )) ~> NewRecords",
-				"UpdateRow sink(allowSchemaDrift: true,",
+				"surrogateKey1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          emp_id as integer,",
