@@ -46,6 +46,9 @@
 				},
 				{
 					"name": "Hashcsv"
+				},
+				{
+					"name": "updateActiveandEnddate"
 				}
 			],
 			"scriptLines": [
@@ -82,6 +85,8 @@
 				"     negate:false,",
 				"     broadcast: 'auto')~> exists1",
 				"empCsv derive(hashcsv = md5(ID+Name+Department)) ~> Hashcsv",
+				"exists1 derive(EndDate = currentDate(),",
+				"          isactive = 0) ~> updateActiveandEnddate",
 				"InsertNewRow sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
