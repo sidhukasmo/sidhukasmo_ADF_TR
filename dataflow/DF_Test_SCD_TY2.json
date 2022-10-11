@@ -70,7 +70,7 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> EmpSqlSCD2",
-				"Hashcsv, hastSql exists(hashcsv == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
+				"Hashcsv, hastSql exists(hashcsv == HashSql,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> Notexists",
 				"Notexists derive(isactive = 1,",
