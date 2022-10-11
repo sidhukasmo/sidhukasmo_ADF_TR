@@ -25,7 +25,7 @@
 					"name": "exists1"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "ActiveAndDates"
 				}
 			],
 			"scriptLines": [
@@ -53,7 +53,9 @@
 				"empCsv, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> exists1",
-				"exists1 derive() ~> derivedColumn1"
+				"exists1 derive(isactive = 1,",
+				"          StartDate = currentTimestamp(),",
+				"          EndDate = toDate('999-12-31', 'yyyy-MM-dd')) ~> ActiveAndDates"
 			]
 		}
 	}
