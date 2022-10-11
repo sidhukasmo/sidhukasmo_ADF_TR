@@ -40,6 +40,12 @@
 				},
 				{
 					"name": "hastUD"
+				},
+				{
+					"name": "exists1"
+				},
+				{
+					"name": "HashIn"
 				}
 			],
 			"scriptLines": [
@@ -64,7 +70,7 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> EmpSqlSCD2",
-				"empCsv, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
+				"HashIn, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> Notexists",
 				"Notexists derive(isactive = 1,",
@@ -72,6 +78,10 @@
 				"          EndDate = toDate('9999-12-31', 'yyyy-mm-dd')) ~> ActiveAndDates",
 				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
 				"EmpSqlSCD2 derive({md5(ID+Name+Department)} = md5(emp_id+ toInteger(emp_name) + toInteger(dept))) ~> hastUD",
+				"hastUD exists(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     negate:false,",
+				"     broadcast: 'auto')~> exists1",
+				"empCsv derive(hashin = md5(ID+Name+Department)) ~> HashIn",
 				"InsertNewRow sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
