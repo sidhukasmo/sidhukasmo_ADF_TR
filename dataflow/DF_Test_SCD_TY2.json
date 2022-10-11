@@ -65,7 +65,7 @@
 				"     negate:true,",
 				"     broadcast: 'auto')~> Notexists",
 				"Notexists derive(isactive = 1,",
-				"          StartDate = currentTimestamp(),",
+				"          StartDate = currentDate(),",
 				"          EndDate = toDate('9999-12-31', 'yyyy-MM-dd')) ~> ActiveAndDates",
 				"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
 				"InsertNewRow sink(allowSchemaDrift: true,",
