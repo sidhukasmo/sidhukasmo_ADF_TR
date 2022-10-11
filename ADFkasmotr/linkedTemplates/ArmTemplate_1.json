@@ -521,6 +521,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "NewRecords"
+						},
+						{
+							"dataset": {
+								"referenceName": "DS_Emp_SCD2",
+								"type": "DatasetReference"
+							},
+							"name": "sinkUpdate"
 						}
 					],
 					"transformations": [
@@ -532,6 +539,21 @@
 						},
 						{
 							"name": "InsertNewRow"
+						},
+						{
+							"name": "hastSql"
+						},
+						{
+							"name": "exists1"
+						},
+						{
+							"name": "Hashcsv"
+						},
+						{
+							"name": "updateActiveandEnddate"
+						},
+						{
+							"name": "updaterow"
 						}
 					],
 					"scriptLines": [
@@ -556,13 +578,21 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> EmpSqlSCD2",
-						"empCsv, EmpSqlSCD2 exists(md5(ID+Name+Department) == md5(emp_id+ toInteger(emp_name) + toInteger(dept)) ,",
+						"Hashcsv, hastSql exists(hashcsv == HashSql,",
 						"     negate:true,",
 						"     broadcast: 'auto')~> Notexists",
 						"Notexists derive(isactive = 1,",
-						"          StartDate = currentTimestamp(),",
-						"          EndDate = toDate('9999-12-31', 'yyyy-MM-dd')) ~> ActiveAndDates",
+						"          StartDate = currentDate(),",
+						"          EndDate = toDate('9999-12-31', 'yyyy-mm-dd')) ~> ActiveAndDates",
 						"ActiveAndDates alterRow(insertIf(1==1)) ~> InsertNewRow",
+						"EmpSqlSCD2 derive(HashSql = md5(emp_id+ toInteger(emp_name) + toInteger(dept))) ~> hastSql",
+						"hastSql, Hashcsv exists(HashSql == hashcsv,",
+						"     negate:false,",
+						"     broadcast: 'auto')~> exists1",
+						"empCsv derive(hashcsv = md5(ID+Name+Department)) ~> Hashcsv",
+						"exists1 derive(EndDate = currentDate(),",
+						"          isactive = 0) ~> updateActiveandEnddate",
+						"updateActiveandEnddate alterRow(updateIf(true())) ~> updaterow",
 						"InsertNewRow sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -588,7 +618,34 @@
 						"          isactive,",
 						"          startdate = StartDate,",
 						"          enddate = EndDate",
-						"     )) ~> NewRecords"
+						"     )) ~> NewRecords",
+						"updaterow sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          emp_id as integer,",
+						"          emp_name as string,",
+						"          dept as string,",
+						"          isactive as integer,",
+						"          startdate as date,",
+						"          enddate as date",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:true,",
+						"     upsertable:false,",
+						"     keys:['emp_id','emp_name','dept'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          emp_id,",
+						"          emp_name,",
+						"          dept,",
+						"          isactive,",
+						"          startdate,",
+						"          enddate = updateActiveandEnddate@EndDate",
+						"     )) ~> sinkUpdate"
 					]
 				}
 			},
@@ -908,7 +965,8 @@
 								"datasetParameters": {
 									"empCsv": {},
 									"EmpSqlSCD2": {},
-									"NewRecords": {}
+									"NewRecords": {},
+									"sinkUpdate": {}
 								}
 							},
 							"staging": {},
