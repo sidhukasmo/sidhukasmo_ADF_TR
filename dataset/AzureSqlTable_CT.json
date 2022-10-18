@@ -1,0 +1,90 @@
+{
+	"name": "AzureSqlTable_CT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LK_AzureSqlDatabase1_output",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Control_Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Synapse_Worskpace",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Server_Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Database_Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Schema_Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Table_Name",
+				"type": "varchar"
+			},
+			{
+				"name": "ETL_Velocity",
+				"type": "varchar"
+			},
+			{
+				"name": "Current_Value",
+				"type": "varchar"
+			},
+			{
+				"name": "Previous_Value",
+				"type": "varchar"
+			},
+			{
+				"name": "Is_Incremental_Load",
+				"type": "bit"
+			},
+			{
+				"name": "EDW_Created_Date",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "EDW_Created_By",
+				"type": "varchar"
+			},
+			{
+				"name": "EDW_Modified_Date",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "EDW_Modified_By",
+				"type": "varchar"
+			},
+			{
+				"name": "DataLake_Container",
+				"type": "varchar"
+			},
+			{
+				"name": "DataLake_Folder",
+				"type": "varchar"
+			},
+			{
+				"name": "Disable_Load_Flag",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Raw_Control_Table"
+		}
+	}
+}
