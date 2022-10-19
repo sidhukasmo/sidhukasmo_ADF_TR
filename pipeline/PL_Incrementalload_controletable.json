@@ -4,6 +4,7 @@
 		"activities": [
 			{
 				"name": "extractoldCTvalue",
+				"description": "oldCTvalue",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -17,7 +18,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "\tselect max(startdate) from dim_emp",
+						"sqlReaderQuery": "\tselect max(startdate) as newStartDate from dim_emp",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -29,6 +30,7 @@
 			},
 			{
 				"name": "extractnewCTvalue",
+				"description": "newCTvalue",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -81,7 +83,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "@select emp_id,emp_name,dept,isactive,startdate,enddate from dim_emp\n\t\t\twhere startdate >'@activity('extractoldCTvalue').output.firstRow'",
+							"value": "select emp_id,emp_name,dept,isactive,startdate,enddate from dim_emp\n\t\t\twhere startdate >'@{activity('extractoldCTvalue').output.firstRow.edw_modified_date}'\n\t\t\tand   startdate <'activity('extractnewCTvalue').output.firstRow'",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
