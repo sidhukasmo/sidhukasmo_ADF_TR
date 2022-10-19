@@ -47,7 +47,7 @@
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "AzureSqlTable_CT",
+						"referenceName": "AzureSqlTable1",
 						"type": "DatasetReference"
 					}
 				}
@@ -107,7 +107,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "AzureSqlTable_CT",
+						"referenceName": "AzureSqlTable1",
 						"type": "DatasetReference"
 					}
 				],
