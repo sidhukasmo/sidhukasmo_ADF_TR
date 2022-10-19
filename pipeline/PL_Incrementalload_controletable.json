@@ -80,6 +80,10 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "@select emp_id,emp_name,dept,isactive,startdate,enddate from dim_emp\n\t\t\twhere startdate >'@activity('extractoldCTvalue').output.firstRow'",
+							"type": "Expression"
+						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
