@@ -47,7 +47,7 @@
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "AzureSqlTable_CT",
 						"type": "DatasetReference"
 					}
 				}
