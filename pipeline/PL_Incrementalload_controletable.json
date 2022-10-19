@@ -4,7 +4,6 @@
 		"activities": [
 			{
 				"name": "extractoldCTvalue",
-				"description": "oldCTvalue",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -18,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "\tselect max(startdate) as newStartDate from dim_emp",
+						"sqlReaderQuery": "\tselect max(startdate) from dim_emp",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -30,7 +29,6 @@
 			},
 			{
 				"name": "extractnewCTvalue",
-				"description": "newCTvalue",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -82,10 +80,6 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": {
-							"value": "select emp_id,emp_name,dept,isactive,startdate,enddate from dim_emp\n\t\t\twhere startdate >'@{activity('extractoldCTvalue').output.firstRow.edw_modified_date}'\n\t\t\tand   startdate <'@activity('extractnewCTvalue').output.firstRow.newStartDate'",
-							"type": "Expression"
-						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -116,49 +110,6 @@
 						"type": "DatasetReference"
 					}
 				]
-			},
-			{
-				"name": "SP Controle Table",
-				"type": "SqlServerStoredProcedure",
-				"dependsOn": [
-					{
-						"activity": "Copy data1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"storedProcedureName": "[dbo].[update_Raw_Control_Table]",
-					"storedProcedureParameters": {
-						"LastModifiedtime": {
-							"value": {
-								"value": "activity('extractoldCTvalue').output.firstRow.edw_modified_date",
-								"type": "Expression"
-							},
-							"type": "DateTime"
-						},
-						"table_name": {
-							"value": {
-								"value": "@activity('extractoldCTvalue').output.firstRow.tablename",
-								"type": "Expression"
-							},
-							"type": "String"
-						}
-					}
-				},
-				"linkedServiceName": {
-					"referenceName": "LK_AzureSqlDatabase1_output",
-					"type": "LinkedServiceReference"
-				}
 			}
 		],
 		"annotations": []
