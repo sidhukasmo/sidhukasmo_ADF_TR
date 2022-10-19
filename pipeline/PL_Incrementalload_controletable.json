@@ -87,7 +87,10 @@
 						"type": "AzureSqlSink",
 						"writeBehavior": "upsert",
 						"upsertSettings": {
-							"useTempDB": true
+							"useTempDB": true,
+							"keys": [
+								"Control_Id"
+							]
 						},
 						"sqlWriterUseTableLock": false,
 						"disableMetricsCollection": false
@@ -145,7 +148,7 @@
 							"type": "DateTime"
 						},
 						"table_name": {
-							"value": "",
+							"value": null,
 							"type": "String"
 						}
 					}
