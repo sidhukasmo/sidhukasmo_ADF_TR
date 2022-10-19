@@ -83,7 +83,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "select emp_id,emp_name,dept,isactive,startdate,enddate from dim_emp\n\t\t\twhere startdate >'@{activity('extractoldCTvalue').output.firstRow.edw_modified_date}'\n\t\t\tand   startdate <'activity('extractnewCTvalue').output.firstRow'",
+							"value": "select emp_id,emp_name,dept,isactive,startdate,enddate from dim_emp\n\t\t\twhere startdate >'@{activity('extractoldCTvalue').output.firstRow.edw_modified_date}'\n\t\t\tand   startdate <'@activity('extractnewCTvalue').output.firstRow.newStartDate'",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
