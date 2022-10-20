@@ -280,7 +280,7 @@
 				]
 			},
 			{
-				"name": "Stored procedure1",
+				"name": "uspUpsertStudent",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
@@ -299,20 +299,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[update_Raw_Control_Table]",
-					"storedProcedureParameters": {
-						"LastModifiedtime": {
-							"value": {
-								"value": "@{activity('extractnewCTvalue').output.firstRow.EDW_Modified_Date}",
-								"type": "Expression"
-							},
-							"type": "DateTime"
-						},
-						"table_name": {
-							"value": null,
-							"type": "String"
-						}
-					}
+					"storedProcedureName": "dbo.usp_upsert_Student "
 				},
 				"linkedServiceName": {
 					"referenceName": "LK_AzureSqlDatabase1_output",
