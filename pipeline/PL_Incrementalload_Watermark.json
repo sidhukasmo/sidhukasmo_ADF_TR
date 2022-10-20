@@ -326,6 +326,10 @@
 			"waterMarkCol": {
 				"type": "string",
 				"defaultValue": "updateDate"
+			},
+			"stgTableName": {
+				"type": "string",
+				"defaultValue": "stgStudent"
 			}
 		},
 		"annotations": []
