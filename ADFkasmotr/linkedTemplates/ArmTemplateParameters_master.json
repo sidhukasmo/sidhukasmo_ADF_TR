@@ -11,6 +11,9 @@
 		"LK_AzureSqlDatabase1_output_connectionString": {
 			"value": ""
 		},
+		"LK_MasterdataDB_connectionString": {
+			"value": ""
+		},
 		"LK_Sink _OUTPUT_connectionString": {
 			"value": ""
 		},

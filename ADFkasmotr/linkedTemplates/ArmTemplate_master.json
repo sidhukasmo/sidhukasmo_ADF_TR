@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LK_AzureSqlDatabase1_output'"
 		},
+		"LK_MasterdataDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LK_MasterdataDB'"
+		},
 		"LK_Sink _OUTPUT_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LK_Sink _OUTPUT'"
@@ -51,6 +55,9 @@
 					},
 					"LK_AzureSqlDatabase1_output_connectionString": {
 						"value": "[parameters('LK_AzureSqlDatabase1_output_connectionString')]"
+					},
+					"LK_MasterdataDB_connectionString": {
+						"value": "[parameters('LK_MasterdataDB_connectionString')]"
 					},
 					"LK_Sink _OUTPUT_connectionString": {
 						"value": "[parameters('LK_Sink _OUTPUT_connectionString')]"

@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LK_AzureSqlDatabase1_output'"
 		},
+		"LK_MasterdataDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LK_MasterdataDB'"
+		},
 		"LK_Sink _OUTPUT_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LK_Sink _OUTPUT'"
@@ -78,6 +82,30 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Test_SCD_TY2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LK_ABS_Input')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -99,6 +127,19 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('LK_AzureSqlDatabase1_output_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LK_MasterdataDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('LK_MasterdataDB_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -158,6 +199,101 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "Cars"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable_CT')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_AzureSqlDatabase1_output",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Control_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Synapse_Worskpace",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Server_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Database_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Schema_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Table_Name",
+						"type": "varchar"
+					},
+					{
+						"name": "ETL_Velocity",
+						"type": "varchar"
+					},
+					{
+						"name": "Current_Value",
+						"type": "varchar"
+					},
+					{
+						"name": "Previous_Value",
+						"type": "varchar"
+					},
+					{
+						"name": "Is_Incremental_Load",
+						"type": "bit"
+					},
+					{
+						"name": "EDW_Created_Date",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "EDW_Created_By",
+						"type": "varchar"
+					},
+					{
+						"name": "EDW_Modified_Date",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "EDW_Modified_By",
+						"type": "varchar"
+					},
+					{
+						"name": "DataLake_Container",
+						"type": "varchar"
+					},
+					{
+						"name": "DataLake_Folder",
+						"type": "varchar"
+					},
+					{
+						"name": "Disable_Load_Flag",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Raw_Control_Table"
 				}
 			},
 			"dependsOn": [
@@ -229,6 +365,230 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Emp_Csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_ABS_Input",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "emp_scd2.csv",
+						"container": "input"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ID",
+						"type": "String"
+					},
+					{
+						"name": "Name",
+						"type": "String"
+					},
+					{
+						"name": "Department",
+						"type": "String"
+					},
+					{
+						"name": "StartDate",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Emp_SCD2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_AzureSqlDatabase1_output",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "emp_id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "emp_name",
+						"type": "varchar"
+					},
+					{
+						"name": "dept",
+						"type": "varchar"
+					},
+					{
+						"name": "isactive",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "startdate",
+						"type": "date"
+					},
+					{
+						"name": "enddate",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "dim_emp"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_MasterdataDBTableStudent')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_MasterdataDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "studentId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "studentName",
+						"type": "varchar"
+					},
+					{
+						"name": "stream",
+						"type": "varchar"
+					},
+					{
+						"name": "marks",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "createDate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "updateDate",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Student"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_MasterdataDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_stgStudent_Destination')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_AzureSqlDatabase1_output",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "studentId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "studentName",
+						"type": "varchar"
+					},
+					{
+						"name": "stream",
+						"type": "varchar"
+					},
+					{
+						"name": "marks",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "createDate",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "updateDate",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "stgStudent"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_watermark_table')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LK_AzureSqlDatabase1_output",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "tableName",
+						"type": "varchar"
+					},
+					{
+						"name": "waterMarkVal",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "WaterMark"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
 			]
 		},
 		{
@@ -455,334 +815,6 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "Dim_Customer"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/GenaricCSV_Output')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_ABS_Input",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"filename": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().filename",
-							"type": "Expression"
-						},
-						"container": "output"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MoviesDB_Input')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_ABS_Input",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "moviesDB.csv",
-						"container": "input"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "movie",
-						"type": "String"
-					},
-					{
-						"name": "title",
-						"type": "String"
-					},
-					{
-						"name": "genres",
-						"type": "String"
-					},
-					{
-						"name": "year",
-						"type": "String"
-					},
-					{
-						"name": "Rating",
-						"type": "String"
-					},
-					{
-						"name": "RottenTomato",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SqlTableGenarate')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_AzureSqlDatabase1_output",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Tablename": {
-						"type": "string"
-					},
-					"SchemaName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().SchemaName",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().Tablename",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SqlTablesInput')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_AzureSqlDatabase1_output",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_AzureSqlDatabase1_output')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/movies_Input')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_ABS_Input",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "movies.csv",
-						"container": "input"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "movieId",
-						"type": "String"
-					},
-					{
-						"name": "title",
-						"type": "String"
-					},
-					{
-						"name": "genres",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/testout')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_ABS_Input",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "testout1",
-						"container": "testout"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "movie",
-						"type": "String"
-					},
-					{
-						"name": "title",
-						"type": "String"
-					},
-					{
-						"name": "genres",
-						"type": "String"
-					},
-					{
-						"name": "year",
-						"type": "String"
-					},
-					{
-						"name": "Rating",
-						"type": "String"
-					},
-					{
-						"name": "RottenTomato",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Emp_Csv')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_ABS_Input",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "emp_scd2.csv",
-						"container": "input"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "ID",
-						"type": "String"
-					},
-					{
-						"name": "Name",
-						"type": "String"
-					},
-					{
-						"name": "Department",
-						"type": "String"
-					},
-					{
-						"name": "StartDate",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LK_ABS_Input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Emp_SCD2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LK_AzureSqlDatabase1_output",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "emp_id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "emp_name",
-						"type": "varchar"
-					},
-					{
-						"name": "dept",
-						"type": "varchar"
-					},
-					{
-						"name": "isactive",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "startdate",
-						"type": "date"
-					},
-					{
-						"name": "enddate",
-						"type": "date"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "dim_emp"
 				}
 			},
 			"dependsOn": [
