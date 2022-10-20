@@ -59,7 +59,7 @@
 				}
 			},
 			{
-				"name": "Copy data1",
+				"name": "CopyToStageTable",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -86,6 +86,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select * from @{pipeline().parameters.srcTableName}\nwhere @{pipeline().parameters.waterMarkCol} > \n'@{activity('lookupOldWaterMark').output.firstRow.waterMarkVal}' \nand @{pipeline().parameters.waterMarkCol} <= \n'@{activity('lookupNewWaterMark').output.firstRow.NewwaterMarkVal}'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -268,7 +269,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_Emp_SCD2",
+						"referenceName": "DS_MasterdataDBTableStudent",
 						"type": "DatasetReference"
 					}
 				],
@@ -284,7 +285,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "Copy data1",
+						"activity": "CopyToStageTable",
 						"dependencyConditions": [
 							"Succeeded"
 						]
