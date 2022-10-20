@@ -86,19 +86,17 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select * from @{pipeline().parameters.srcTableName}\nwhere @{pipeline().parameters.waterMarkCol} > \n'@{activity('lookupOldWaterMark').output.firstRow.waterMarkVal}' \nand @{pipeline().parameters.waterMarkCol} <= \n'@{activity('lookupNewWaterMark').output.firstRow.NewwaterMarkVal}'",
+						"sqlReaderQuery": "SELECT waterMarkVal\nFROM [dbo].[WaterMark]\nWHERE tableName = '@{pipeline().parameters.finalTableName}'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE @{pipeline().parameters.stgTableName}",
-						"writeBehavior": "upsert",
-						"upsertSettings": {
-							"useTempDB": true,
-							"keys": []
+						"preCopyScript": {
+							"value": "TRUNCATE TABLE @{pipeline().parameters.stgTableName}",
+							"type": "Expression"
 						},
-						"sqlWriterUseTableLock": false,
+						"sqlWriterStoredProcedureName": "[dbo].[usp_upsert_Student]",
 						"disableMetricsCollection": false
 					},
 					"enableStaging": false,
