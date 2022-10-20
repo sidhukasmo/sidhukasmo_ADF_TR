@@ -181,7 +181,7 @@
 					"storedProcedureParameters": {
 						"LastModifiedtime": {
 							"value": {
-								"value": "@{activity('NewWatermarkValue').output.firstRow.NewwaterMarkVal}",
+								"value": "@{activity('NewWatermarkValue').output.firstRow.updateDate}",
 								"type": "Expression"
 							},
 							"type": "DateTime"
