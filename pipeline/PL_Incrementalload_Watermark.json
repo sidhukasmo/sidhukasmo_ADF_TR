@@ -99,7 +99,9 @@
 						"writeBehavior": "upsert",
 						"upsertSettings": {
 							"useTempDB": true,
-							"keys": []
+							"keys": [
+								"studentId"
+							]
 						},
 						"sqlWriterUseTableLock": false,
 						"disableMetricsCollection": false
