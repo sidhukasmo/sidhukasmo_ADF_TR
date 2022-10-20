@@ -1,0 +1,26 @@
+{
+	"name": "DS_watermark_table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LK_AzureSqlDatabase1_output",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "tableName",
+				"type": "varchar"
+			},
+			{
+				"name": "waterMarkVal",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "WaterMark"
+		}
+	}
+}

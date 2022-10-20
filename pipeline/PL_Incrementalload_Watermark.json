@@ -1,5 +1,5 @@
 {
-	"name": "PL_Incrementalload_controletable",
+	"name": "PL_Incrementalload_Watermark",
 	"properties": {
 		"activities": [
 			{
@@ -314,6 +314,20 @@
 				}
 			}
 		],
+		"parameters": {
+			"finalTableName": {
+				"type": "string",
+				"defaultValue": "Student"
+			},
+			"srcTableName": {
+				"type": "string",
+				"defaultValue": "Student"
+			},
+			"waterMarkCol": {
+				"type": "string",
+				"defaultValue": "updateDate"
+			}
+		},
 		"annotations": []
 	}
 }
