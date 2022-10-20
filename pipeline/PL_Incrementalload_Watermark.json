@@ -96,7 +96,11 @@
 							"value": "TRUNCATE TABLE @{pipeline().parameters.stgTableName}",
 							"type": "Expression"
 						},
-						"writeBehavior": "insert",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": []
+						},
 						"sqlWriterUseTableLock": false,
 						"disableMetricsCollection": false
 					},
