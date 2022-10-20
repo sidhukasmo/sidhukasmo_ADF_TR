@@ -92,12 +92,11 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE @{pipeline().parameters.stgTableName}",
 						"writeBehavior": "upsert",
 						"upsertSettings": {
 							"useTempDB": true,
-							"keys": [
-								"Control_Id"
-							]
+							"keys": []
 						},
 						"sqlWriterUseTableLock": false,
 						"disableMetricsCollection": false
@@ -275,7 +274,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_Emp_SCD2",
+						"referenceName": "DS_stgStudent_Destination",
 						"type": "DatasetReference"
 					}
 				]
