@@ -17,7 +17,10 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "\tselect max(startdate) from dim_emp",
+						"sqlReaderQuery": {
+							"value": "@SELECT waterMarkVal\nFROM [dbo].[WaterMark]\nWHERE tableName = pipeline().parameters.finalTableName",
+							"type": "Expression"
+						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
