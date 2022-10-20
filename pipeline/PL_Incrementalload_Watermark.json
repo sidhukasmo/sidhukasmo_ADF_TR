@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "extractoldCTvalue",
+				"name": "OldWatermarkValue",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -60,7 +60,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "extractoldCTvalue",
+						"activity": "OldWatermarkValue",
 						"dependencyConditions": [
 							"Succeeded"
 						]
