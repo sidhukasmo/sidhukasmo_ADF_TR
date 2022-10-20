@@ -31,7 +31,7 @@
 				}
 			},
 			{
-				"name": "extractnewCTvalue",
+				"name": "NewWatermarkValue",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -45,12 +45,15 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select edw_modified_date from Raw_Control_Table where table_name = 'dim_emp'",
+						"sqlReaderQuery": {
+							"value": "SELECT MAX(@{pipeline().parameters.waterMarkCol}) AS NewwaterMarkVal\nFROM @{pipeline().parameters.srcTableName}",
+							"type": "Expression"
+						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "AzureSqlTable_CT",
+						"referenceName": "DS_MasterdataDBTableStudent",
 						"type": "DatasetReference"
 					}
 				}
@@ -66,7 +69,7 @@
 						]
 					},
 					{
-						"activity": "extractnewCTvalue",
+						"activity": "NewWatermarkValue",
 						"dependencyConditions": [
 							"Succeeded"
 						]
