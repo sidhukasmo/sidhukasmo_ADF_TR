@@ -86,7 +86,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT waterMarkVal\nFROM [dbo].[WaterMark]\nWHERE tableName = '@{pipeline().parameters.finalTableName}'",
+						"sqlReaderQuery": "select * from @{pipeline().parameters.srcTableName}\nwhere @{pipeline().parameters.waterMarkCol} > \n'@{activity('lookupOldWaterMark').output.firstRow.waterMarkVal}' \nand @{pipeline().parameters.waterMarkCol} <= \n'@{activity('lookupNewWaterMark').output.firstRow.NewwaterMarkVal}'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -96,7 +96,8 @@
 							"value": "TRUNCATE TABLE @{pipeline().parameters.stgTableName}",
 							"type": "Expression"
 						},
-						"sqlWriterStoredProcedureName": "[dbo].[usp_upsert_Student]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
 						"disableMetricsCollection": false
 					},
 					"enableStaging": false,
