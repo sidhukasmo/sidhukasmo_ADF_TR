@@ -1,0 +1,12 @@
+{
+	"name": "LK_MasterdataDB",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "integrated security=False;encrypt=True;connection timeout=30;data source=azuredbtr1.database.windows.net;initial catalog=metadatasalesdb;user id=sidhukasmo",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDJERjc0OTc0LTIwOEQtNEFCNi04MDEzLTNGQ0E2NjdDQzgxN19iZGIwNDJmZS1hNGI1LTQ0ZGEtYmQ1NC1hZGQ0YTQxZThhMTUiDQp9"
+		}
+	}
+}
