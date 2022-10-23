@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "PL_Test_SCD_TY2",
+				"name": "DF_Test_SCD_TY2",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -15,6 +15,10 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Test_SCD_TY2",
+						"type": "DataFlowReference"
+					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
